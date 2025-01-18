@@ -1,0 +1,63 @@
+# frozen_string_literal: true
+
+module Philosophal
+  class Property
+    def initialize(name:, type:, default:, transform:, coercion:)
+      @name = name
+      @type = type
+      @default = default
+      @transform = transform
+      @coercion = coercion
+    end
+
+    attr_reader :name, :type, :default, :transform, :coercion
+
+    def default?
+      @default != nil
+    end
+
+    def default_value
+      case @default
+      when Proc then @default.call
+      else @default
+      end
+    end
+
+    def transform?
+      @transform != nil
+    end
+
+    def check_conversion(_receiver, value)
+      # Literal.check(actual: value, expected: @type) { |c| c.fill_receiver(receiver:, method: "##{@name.name}=(value)") }
+      # value
+      # puts self
+      # puts receiver
+      # puts value
+
+      Philosophal.convert(self, value)
+    end
+
+    def generate_writer_method(buffer = +'')
+      buffer <<
+        ' def ' <<
+        @name.name <<
+        "=(value)\n  " \
+        '@' << @name.name << ' = self.class.philosophal_properties[:' <<
+        @name.name <<
+        "].check_conversion(self, value)\n" \
+        "rescue Philosophal::TypeError => error\n  error.set_backtrace(caller(1))\n  raise\n" \
+        "end\n"
+    end
+
+    def generate_reader_method(buffer = +'')
+      buffer <<
+        ' def ' <<
+        @name.name <<
+        "\n  " \
+        '@' << @name.name << ' || self.class.philosophal_properties[:' <<
+        @name.name <<
+        "].default_value\n" \
+        "end\n"
+    end
+  end
+end
