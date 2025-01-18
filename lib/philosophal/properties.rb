@@ -4,7 +4,7 @@ module Philosophal
   module Properties
     autoload :Schema, 'philosophal/properties/schema'
 
-    def cprop(name, type, default: nil, transform: nil, &coercion)
+    def cprop(name, type, default: nil, transform: nil)
       if default && !(default.is_a?(Proc) || default.frozen?)
         default.freeze
       end
@@ -17,8 +17,7 @@ module Philosophal
         name:,
         type:,
         default:,
-        transform:,
-        coercion:
+        transform:
       )
 
       philosophal_properties << property
