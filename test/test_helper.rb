@@ -22,4 +22,6 @@ class Person
   cprop :what_time_is_it, Time, default: -> { Time.now }
   cprop :email, String, transform: :downcase
   cprop :refs, Array, transform: ->(x) { x.map(&:upcase) }
+  cprop :is_male, _Boolean
+  cprop :is_female, _Boolean
 end

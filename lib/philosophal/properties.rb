@@ -4,6 +4,8 @@ module Philosophal
   module Properties
     autoload :Schema, 'philosophal/properties/schema'
 
+    include Philosophal::Types
+
     def cprop(name, type, default: nil, transform: nil)
       if default && !(default.is_a?(Proc) || default.frozen?)
         default.freeze
@@ -51,14 +53,37 @@ module Philosophal
         @__philosophal_extension__
       else
         @__philosophal_extension__ = Module.new do
-          # def initialize
-          # 	after_initialize if respond_to?(:after_initialize)
-          # end
-          # def to_h
-          # 		{}
-          # end
+          def cprop?(property_name, klass)
+            property = self.class.philosophal_properties.properties_index[property_name.to_sym]
+            return false unless property
 
-          # set_temporary_name "Literal::Properties(Extension)" if respond_to?(:set_temporary_name)
+            klass = klass.class unless klass.is_a?(Class)
+            property.type == klass
+          end
+
+          def philosophal_inspect(light = false)
+            keys_map = philosophal_inspect_map
+
+            if light
+              keys_map.reject! do |_, v|
+                v.nil? || (v.respond_to?(:empty?) && v.empty?)
+              end
+            end
+
+            keys_str = keys_map.map { |k, v| [k, v.inspect].join(': ') }.join(', ')
+            "#{self.class}:#{format('0x00%x', (object_id << 1))} #{keys_str}"
+          end
+          alias cprop_inspect philosophal_inspect
+
+          def philosophal_inspect_map
+            Hash[self.class.philosophal_properties.properties_index.values.map do |property|
+              [
+                property.name,
+                self.send(property.name)
+              ]
+            end]
+          end
+          alias cprop_inspect_map philosophal_inspect_map
         end
       end
     end

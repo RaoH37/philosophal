@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
-require 'time'
-
 module Philosophal
   class Convertor
     METHOD_TYPE_MAP = {
@@ -13,7 +10,9 @@ module Philosophal
       Hash => :Hash,
       Time => :Time,
       Date => :Date,
-      DateTime => :DateTime
+      DateTime => :DateTime,
+      Philosophal::Types::BooleanType::Instance => :Boolean,
+      Pathname => :Pathname
     }.freeze
 
     class << self
@@ -73,6 +72,29 @@ module Philosophal
         return Time.zone.at(obj).to_datetime if obj.is_a?(Numeric)
 
         raise Philosophal::TypeError
+      end
+
+      def Boolean(obj)
+        if obj.is_a?(Numeric)
+          return true if obj == 1
+          return false if obj == 0
+
+          raise Philosophal::TypeError
+        elsif obj.is_a?(String)
+          obj_downcase = obj.downcase
+          return true if obj_downcase == 'true'
+          return false if obj_downcase == 'false'
+
+          raise Philosophal::TypeError
+        else
+          raise Philosophal::TypeError
+        end
+      end
+
+      def Pathname(obj)
+        raise Philosophal::TypeError unless obj.respond_to?(:to_s)
+
+        Pathname.new(obj)
       end
     end
   end
