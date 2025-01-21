@@ -6,18 +6,17 @@ Gem::Specification.new do |spec|
   spec.version  = File.read(File.expand_path('VERSION', __dir__)).strip
   spec.authors  = ['Maxime Désécot']
   spec.email    = ['maxime.desecot@gmail.com']
-  spec.date     = `date '+%Y-%m-%d'`
 
   spec.summary = 'Philosophal setter convertor'
   spec.description = 'Auto convert value on setter method call'
-  spec.homepage = "https://github.com/RaoH37/philosophal"
+  spec.homepage = 'https://github.com/RaoH37/philosophal'
   spec.required_ruby_version = '>= 3.1'
 
-  spec.license  = 'GPL-3.0-only'
+  spec.license = 'GPL-3.0-only'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = "https://github.com/RaoH37/philosophal"
-  spec.metadata['changelog_uri'] = "https://github.com/RaoH37/philosophal/blob/main/CHANGELOG.md"
+  spec.metadata['source_code_uri'] = 'https://github.com/RaoH37/philosophal'
+  spec.metadata['changelog_uri'] = 'https://github.com/RaoH37/philosophal/blob/main/CHANGELOG.md'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

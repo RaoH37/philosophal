@@ -1,7 +1,11 @@
-module Philosophal::Types
-  autoload :BooleanType, 'philosophal/types/boolean_type'
+# frozen_string_literal: true
 
-  def _Boolean
-    BooleanType::Instance
+module Philosophal
+  module Types
+    autoload :BooleanType, 'philosophal/types/boolean_type'
+
+    def _Boolean
+      BooleanType::Instance
+    end
   end
 end

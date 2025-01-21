@@ -2,6 +2,7 @@
 
 require 'date'
 require 'pathname'
+require 'set'
 require 'time'
 
 module Philosophal
@@ -17,8 +18,6 @@ module Philosophal
   autoload :ArgumentError, 'philosophal/errors/argument_error'
 
   def self.convert(property, value)
-    # p property.type
-    # p value
     if property.type === value
       if property.transform?
         Transform.make(property.transform, value)

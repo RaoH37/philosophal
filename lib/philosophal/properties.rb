@@ -7,20 +7,13 @@ module Philosophal
     include Philosophal::Types
 
     def cprop(name, type, default: nil, transform: nil)
-      if default && !(default.is_a?(Proc) || default.frozen?)
-        default.freeze
-      end
+      default.freeze if default && !(default.is_a?(Proc) || default.frozen?)
 
       if transform && !(transform.is_a?(Proc) || transform.is_a?(Symbol))
         raise Philosophal::ArgumentError, "transform param must be a Symbol object or a Proc (#{name})."
       end
 
-      property = __philosophal_property_class__.new(
-        name:,
-        type:,
-        default:,
-        transform:
-      )
+      property = __philosophal_property_class__.new(name:, type:, default:, transform:)
 
       philosophal_properties << property
       __define_philosophal_methods__(property)
@@ -76,12 +69,12 @@ module Philosophal
           alias cprop_inspect philosophal_inspect
 
           def philosophal_inspect_map
-            Hash[self.class.philosophal_properties.properties_index.values.map do |property|
+            self.class.philosophal_properties.properties_index.values.to_h do |property|
               [
                 property.name,
-                self.send(property.name)
+                send(property.name)
               ]
-            end]
+            end
           end
           alias cprop_inspect_map philosophal_inspect_map
         end
@@ -92,6 +85,7 @@ module Philosophal
       buffer << "# frozen_string_philosophal: true\n"
       new_property.generate_writer_method(buffer)
       new_property.generate_reader_method(buffer)
+      new_property.generate_boolean_method(buffer) if new_property.type == Philosophal::Types::BooleanType::Instance
 
       # puts buffer
 

@@ -52,5 +52,14 @@ module Philosophal
         "].default_value\n" \
         "end\n"
     end
+
+    def generate_boolean_method(buffer = +'')
+      buffer <<
+        ' def ' <<
+        @name.name <<
+        "?\n  " \
+        '!!@' << @name.name <<
+        "\nend\n"
+    end
   end
 end

@@ -1,9 +1,17 @@
-class Philosophal::Types::BooleanType
-  Instance = new.freeze
+# frozen_string_literal: true
 
-  def ===(value)
-    true == value || false == value
+module Philosophal
+  module Types
+    class BooleanType
+      Instance = new.freeze
+
+      TRUE_FALSE_SET = Set[true, false]
+
+      def ===(value)
+        TRUE_FALSE_SET.include?(value)
+      end
+
+      freeze
+    end
   end
-
-  freeze
 end

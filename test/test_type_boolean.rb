@@ -7,13 +7,13 @@ class TestTypeBoolean < Minitest::Test
     foo = Person.new
     foo.is_male = true
 
-    assert_equal true, foo.is_male
+    assert foo.is_male
   end
 
   def test_convert_boolean_from_integer_true
     foo = Person.new
     foo.is_female = 1
 
-    assert_equal true, foo.is_female
+    assert foo.is_female
   end
 end

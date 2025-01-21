@@ -4,7 +4,7 @@ require_relative 'test_helper'
 
 class TestTransformArray < Minitest::Test
   def test_transform_array_to_upcase
-    arr = ['aaa', 'bbb', 'ccc']
+    arr = %w[aaa bbb ccc]
     foo = Person.new
     foo.refs = arr
 
