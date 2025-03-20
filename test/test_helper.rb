@@ -24,4 +24,5 @@ class Person
   cprop :refs, Array, transform: ->(x) { x.map(&:upcase) }
   cprop :is_male, _Boolean
   cprop :is_female, _Boolean
+  cprop :eyes_color, String, immutable: true
 end

@@ -6,14 +6,18 @@ module Philosophal
 
     include Philosophal::Types
 
-    def cprop(name, type, default: nil, transform: nil)
+    def cprop(name, type, default: nil, transform: nil, immutable: false)
       default.freeze if default && !(default.is_a?(Proc) || default.frozen?)
 
       if transform && !(transform.is_a?(Proc) || transform.is_a?(Symbol))
         raise Philosophal::ArgumentError, "transform param must be a Symbol object or a Proc (#{name})."
       end
 
-      property = __philosophal_property_class__.new(name:, type:, default:, transform:)
+      unless Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(immutable)
+        raise Philosophal::ArgumentError, "immutable param must be true or false."
+      end
+
+      property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:)
 
       philosophal_properties << property
       __define_philosophal_methods__(property)
@@ -23,7 +27,7 @@ module Philosophal
     def philosophal_properties
       return @philosophal_properties if defined?(@philosophal_properties)
 
-      @philosophal_properties = if superclass.is_a?(Philosophal::Properties)
+      @philosophal_properties = if defined?(superclass) && superclass.is_a?(Philosophal::Properties)
                                   superclass.philosophal_properties.dup
                                 else
                                   Philosophal::Properties::Schema.new
@@ -83,7 +87,12 @@ module Philosophal
 
     def __generate_philosophal_methods__(new_property, buffer = +'')
       buffer << "# frozen_string_philosophal: true\n"
-      new_property.generate_writer_method(buffer)
+      if new_property.immutable
+        new_property.generate_immutable_writer_method(buffer)
+      else
+        new_property.generate_writer_method(buffer)
+      end
+
       new_property.generate_reader_method(buffer)
       new_property.generate_boolean_method(buffer) if new_property.type == Philosophal::Types::BooleanType::Instance
 

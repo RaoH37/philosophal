@@ -16,12 +16,24 @@ module Philosophal
         @properties_index[key]
       end
 
+      def keys
+        @properties_index.keys
+      end
+
       def <<(value)
         @mutex.synchronize do
           @properties_index[value.name] = value
         end
 
         self
+      end
+
+      def immutables
+        @properties_index.select { |_, v| v.immutable }
+      end
+
+      def mutables
+        @properties_index.reject { |_, v| v.immutable }
       end
     end
   end

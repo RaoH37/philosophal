@@ -2,14 +2,15 @@
 
 module Philosophal
   class Property
-    def initialize(name:, type:, default:, transform:)
+    def initialize(name:, type:, default:, transform:, immutable:)
       @name = name
       @type = type
       @default = default
       @transform = transform
+      @immutable = immutable
     end
 
-    attr_reader :name, :type, :default, :transform
+    attr_reader :name, :type, :default, :transform, :immutable
 
     def default?
       @default != nil
@@ -32,13 +33,25 @@ module Philosophal
 
     def generate_writer_method(buffer = +'')
       buffer <<
-        ' def ' <<
-        @name.name <<
-        "=(value)\n  " \
+        ' def ' << @name.name << "=(value)\n  " \
         '@' << @name.name << ' = self.class.philosophal_properties[:' <<
         @name.name <<
         "].check_conversion(self, value)\n" \
-        "rescue Philosophal::TypeError => error\n  error.set_backtrace(caller(1))\n  raise\n" \
+        "rescue Philosophal::TypeError => error\n" \
+        "error.set_backtrace(caller(1))\n  raise\n" \
+        "end\n"
+    end
+
+    def generate_immutable_writer_method(buffer = +'')
+      buffer <<
+        ' def ' << @name.name << "=(value)\n  " \
+        'raise FrozenError, "can\'t modify frozen variable @' <<
+        @name.name << '" if defined?(@' << @name.name << ")\n" \
+        '@' << @name.name << ' = self.class.philosophal_properties[:' <<
+        @name.name <<
+        "].check_conversion(self, value).freeze\n" \
+        "rescue Philosophal::TypeError => error\n" \
+        "error.set_backtrace(caller(1))\n  raise\n" \
         "end\n"
     end
 
