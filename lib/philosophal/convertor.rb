@@ -12,10 +12,19 @@ module Philosophal
       Date => :convert_to_date,
       DateTime => :convert_to_date_time,
       Philosophal::Types::BooleanType::Instance => :convert_to_boolean,
+      Philosophal::Types::ArrayOfType => :convert_to_array_of,
       Pathname => :convert_to_pathname
     }.freeze
 
     class << self
+      def convert_method_for(type)
+        if type.respond_to?(:subtype)
+          [METHOD_TYPE_MAP[type.class], type.subtype]
+        else
+          METHOD_TYPE_MAP[type]
+        end
+      end
+
       def convert_to_string(obj)
         raise Philosophal::TypeError unless obj.respond_to?(:to_s)
 
@@ -92,6 +101,17 @@ module Philosophal
         raise Philosophal::TypeError unless obj.respond_to?(:to_s)
 
         Pathname.new(obj)
+      end
+
+      def convert_to_array_of(obj, subtype)
+        subtype_convert_method = convert_method_for(subtype)
+        raise Philosophal::TypeError unless subtype_convert_method
+
+        convert_to_array(obj).tap do |new_obj|
+          new_obj.map! do |item|
+            send(subtype_convert_method, item)
+          end
+        end
       end
     end
   end

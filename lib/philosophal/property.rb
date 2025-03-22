@@ -34,7 +34,7 @@ module Philosophal
     def generate_writer_method(buffer = +'')
       buffer <<
         ' def ' << @name.name << "=(value)\n  " \
-        '@' << @name.name << ' = self.class.philosophal_properties[:' <<
+                                 '@' << @name.name << ' = self.class.philosophal_properties[:' <<
         @name.name <<
         "].check_conversion(self, value)\n" \
         "rescue Philosophal::TypeError => error\n" \

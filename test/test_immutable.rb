@@ -7,7 +7,7 @@ class TestImmutable < Minitest::Test
     foo = Person.new
     foo.eyes_color = 'blue'
 
-    assert foo.eyes_color.frozen?
+    assert_predicate foo.eyes_color, :frozen?
   end
 
   def test_raise

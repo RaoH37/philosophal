@@ -14,7 +14,7 @@ module Philosophal
       end
 
       unless Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(immutable)
-        raise Philosophal::ArgumentError, "immutable param must be true or false."
+        raise Philosophal::ArgumentError, 'immutable param must be true or false.'
       end
 
       property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:)

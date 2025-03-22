@@ -25,14 +25,18 @@ module Philosophal
         value
       end
     else
-      convert_method = Convertor::METHOD_TYPE_MAP[property.type]
+      convert_method, subtype = Convertor.convert_method_for(property.type)
       raise Philosophal::TypeError unless convert_method
 
-      if property.transform?
-        Transform.make(property.transform, Convertor.send(convert_method, value))
-      else
-        Convertor.send(convert_method, value)
-      end
+      converted = if subtype
+                    Convertor.send(convert_method, value, subtype)
+                  else
+                    Convertor.send(convert_method, value)
+                  end
+
+      return converted unless property.transform?
+
+      Transform.make(property.transform, converted)
     end
   end
 end

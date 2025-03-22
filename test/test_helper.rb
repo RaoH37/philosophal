@@ -25,4 +25,5 @@ class Person
   cprop :is_male, _Boolean
   cprop :is_female, _Boolean
   cprop :eyes_color, String, immutable: true
+  cprop :sports, _ArrayOf(String), transform: ->(x) { x.map(&:upcase) }
 end
