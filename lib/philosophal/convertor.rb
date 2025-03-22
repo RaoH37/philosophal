@@ -3,6 +3,7 @@
 module Philosophal
   class Convertor
     METHOD_TYPE_MAP = {
+      Symbol => :convert_to_symbol,
       String => :convert_to_string,
       Integer => :convert_to_integer,
       Float => :convert_to_float,
@@ -13,6 +14,7 @@ module Philosophal
       DateTime => :convert_to_date_time,
       Philosophal::Types::BooleanType::Instance => :convert_to_boolean,
       Philosophal::Types::ArrayOfType => :convert_to_array_of,
+      Philosophal::Types::HashOfType => :convert_to_hash_of,
       Pathname => :convert_to_pathname
     }.freeze
 
@@ -23,6 +25,12 @@ module Philosophal
         else
           METHOD_TYPE_MAP[type]
         end
+      end
+
+      def convert_to_symbol(obj)
+        raise Philosophal::TypeError unless obj.respond_to?(:to_sym)
+
+        obj.to_sym
       end
 
       def convert_to_string(obj)
@@ -111,6 +119,19 @@ module Philosophal
           new_obj.map! do |item|
             send(subtype_convert_method, item)
           end
+        end
+      end
+
+      def convert_to_hash_of(obj, subtype)
+        key_convert_method = convert_method_for(subtype[:key_type])
+        raise Philosophal::TypeError unless key_convert_method
+
+        value_convert_method = convert_method_for(subtype[:value_type])
+        raise Philosophal::TypeError unless value_convert_method
+
+        convert_to_hash(obj).tap do |new_obj|
+          new_obj.transform_keys! { |key| send(key_convert_method, key) }
+          new_obj.transform_values! { |value| send(value_convert_method, value) }
         end
       end
     end

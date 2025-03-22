@@ -45,9 +45,9 @@ module Philosophal
     def generate_immutable_writer_method(buffer = +'')
       buffer <<
         ' def ' << @name.name << "=(value)\n  " \
-        'raise FrozenError, "can\'t modify frozen variable @' <<
+                                 'raise FrozenError, "can\'t modify frozen variable @' <<
         @name.name << '" if defined?(@' << @name.name << ")\n" \
-        '@' << @name.name << ' = self.class.philosophal_properties[:' <<
+                                                         '@' << @name.name << ' = self.class.philosophal_properties[:' <<
         @name.name <<
         "].check_conversion(self, value).freeze\n" \
         "rescue Philosophal::TypeError => error\n" \
