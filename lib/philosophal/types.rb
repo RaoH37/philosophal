@@ -15,7 +15,7 @@ module Philosophal
     end
 
     def _HashOf(key_type, value_type)
-      HashOfType.new(key_type, value_type)
+      HashOfType.instance(key_type, value_type)
     end
   end
 end
