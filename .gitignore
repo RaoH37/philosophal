@@ -10,3 +10,4 @@
 /.github
 /*.lock
 /*.gem
+/bin/test

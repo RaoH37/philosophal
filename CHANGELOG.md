@@ -7,7 +7,3 @@
 - Add: Do not duplicate **ArrayOf** instance for same subtype
 - Add: Do not duplicate **HashOf** instance for same **key type** and **value type**
 - Add: new type **AnyType**
-
-## TODO
-
-- change readme
