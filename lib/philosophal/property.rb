@@ -27,7 +27,7 @@ module Philosophal
       @transform != nil
     end
 
-    def check_conversion(_receiver, value)
+    def check_conversion(value)
       Philosophal.convert(self, value)
     end
 
@@ -36,7 +36,7 @@ module Philosophal
         ' def ' << @name.name << "=(value)\n  " \
                                  '@' << @name.name << ' = self.class.philosophal_properties[:' <<
         @name.name <<
-        "].check_conversion(self, value)\n" \
+        "].check_conversion(value)\n" \
         "rescue Philosophal::TypeError => error\n" \
         "error.set_backtrace(caller(1))\n  raise\n" \
         "end\n"
@@ -49,7 +49,7 @@ module Philosophal
         @name.name << '" if defined?(@' << @name.name << ")\n" \
                                                          '@' << @name.name << ' = self.class.philosophal_properties[:' <<
         @name.name <<
-        "].check_conversion(self, value).freeze\n" \
+        "].check_conversion(value).freeze\n" \
         "rescue Philosophal::TypeError => error\n" \
         "error.set_backtrace(caller(1))\n  raise\n" \
         "end\n"
