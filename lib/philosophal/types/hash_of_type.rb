@@ -3,18 +3,22 @@
 module Philosophal
   module Types
     class HashOfType
-      MEMORIZATION = {}
-
       def self.instance(key_type, value_type)
         subtype = { key_type:, value_type: }
-        MEMORIZATION.fetch(Marshal.dump(subtype), new(subtype).freeze)
+        memorization.fetch(Marshal.dump(subtype), new(subtype).freeze)
+      end
+
+      def self.memorization
+        return @memorization if defined?(@memorization)
+
+        @memorization = {}
       end
 
       attr_reader :subtype
 
       def initialize(subtype)
         @subtype = subtype.freeze
-        MEMORIZATION[Marshal.dump(subtype)] = self
+        self.class.memorization[Marshal.dump(subtype)] = self
       end
 
       def ===(hash)
@@ -22,8 +26,6 @@ module Philosophal
           !hash.keys.find { |key| !key.is_a?(@subtype[:key_type]) } &&
           !hash.values.find { |value| !value.is_a?(@subtype[:value_type]) }
       end
-
-      freeze
     end
   end
 end
