@@ -27,4 +27,5 @@ class Person
   cprop :eyes_color, String, immutable: true
   cprop :sports, _ArrayOf(String), transform: ->(x) { x.map(&:upcase) }
   cprop :priorities, _HashOf(Symbol, String)
+  cprop :any, _Any
 end

@@ -12,6 +12,7 @@ module Philosophal
       Time => :convert_to_time,
       Date => :convert_to_date,
       DateTime => :convert_to_date_time,
+      Philosophal::Types::AnyType::Instance => :convert_to_any,
       Philosophal::Types::BooleanType::Instance => :convert_to_boolean,
       Philosophal::Types::ArrayOfType => :convert_to_array_of,
       Philosophal::Types::HashOfType => :convert_to_hash_of,
@@ -89,6 +90,10 @@ module Philosophal
         return Time.zone.at(obj).to_datetime if obj.is_a?(Numeric)
 
         raise Philosophal::TypeError
+      end
+
+      def convert_to_any(obj)
+        obj
       end
 
       def convert_to_boolean(obj)
