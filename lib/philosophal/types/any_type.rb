@@ -5,7 +5,7 @@ module Philosophal
     class AnyType
       Instance = new.freeze
 
-      def ===(value)
+      def ===(_value)
         true
       end
 
