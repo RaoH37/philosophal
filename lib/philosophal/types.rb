@@ -11,7 +11,7 @@ module Philosophal
     end
 
     def _ArrayOf(subtype)
-      ArrayOfType.new(subtype)
+      ArrayOfType.instance(subtype)
     end
 
     def _HashOf(key_type, value_type)
