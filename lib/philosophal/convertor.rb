@@ -67,9 +67,9 @@ module Philosophal
       end
 
       def convert_to_time(obj)
-        return Time.zone.local(*obj) if obj.is_a?(Array)
-        return Time.zone.parse(obj) if obj.is_a?(String)
-        return Time.zone.at(obj) if obj.is_a?(Numeric)
+        return Time.local(*obj) if obj.is_a?(Array)
+        return Time.parse(obj) if obj.is_a?(String)
+        return Time.at(obj) if obj.is_a?(Numeric)
 
         raise Philosophal::TypeError
       end
@@ -78,7 +78,7 @@ module Philosophal
         return obj.to_date if obj.respond_to?(:to_date)
         return Date.new(*obj) if obj.is_a?(Array)
         return Date.parse(obj) if obj.is_a?(String)
-        return Time.zone.at(obj).to_date if obj.is_a?(Numeric)
+        return Time.at(obj).to_date if obj.is_a?(Numeric)
 
         raise Philosophal::TypeError
       end
