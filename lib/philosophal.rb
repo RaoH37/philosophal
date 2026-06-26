@@ -4,6 +4,7 @@ require 'date'
 require 'pathname'
 require 'set'
 require 'time'
+require 'json'
 
 module Philosophal
   autoload :Convertor, 'philosophal/convertor'
@@ -13,6 +14,7 @@ module Philosophal
   autoload :Property, 'philosophal/property'
 
   autoload :Types, 'philosophal/types'
+  autoload :Loaders, 'philosophal/loaders'
 
   autoload :TypeError, 'philosophal/errors/type_error'
   autoload :ArgumentError, 'philosophal/errors/argument_error'

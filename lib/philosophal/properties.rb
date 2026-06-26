@@ -3,6 +3,7 @@
 module Philosophal
   module Properties
     autoload :Schema, 'philosophal/properties/schema'
+    autoload :JSONLoader, 'philosophal/loaders/json_loader'
 
     include Philosophal::Types
 
@@ -51,6 +52,12 @@ module Philosophal
       end
     end
     alias cprop_descriptions philosophal_descriptions
+
+    def json
+      return @json if defined?(@json)
+
+      @json = Philosophal::Loaders::JSONLoader.new(self)
+    end
 
     private
 

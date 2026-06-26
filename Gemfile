@@ -13,3 +13,5 @@ group :rubocop do
   gem 'rubocop-packaging', require: false
   gem 'rubocop-performance', require: false
 end
+
+gem 'json'
