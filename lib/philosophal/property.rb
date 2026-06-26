@@ -2,15 +2,16 @@
 
 module Philosophal
   class Property
-    def initialize(name:, type:, default:, transform:, immutable:)
+    def initialize(name:, type:, default:, transform:, immutable:, description:)
       @name = name
       @type = type
       @default = default
       @transform = transform
       @immutable = immutable
+      @description = description
     end
 
-    attr_reader :name, :type, :default, :transform, :immutable
+    attr_reader :name, :type, :default, :transform, :immutable, :description
 
     def default?
       @default != nil
@@ -72,6 +73,15 @@ module Philosophal
         @name.name <<
         "?\n  " \
         '!!@' << @name.name <<
+        "\nend\n"
+    end
+
+    def generate_description_method(buffer = +'')
+      buffer <<
+        ' def ' <<
+        @name.name <<
+        "_description\n  " \
+        '%(' << @description << ')' \
         "\nend\n"
     end
   end

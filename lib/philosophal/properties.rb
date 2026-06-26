@@ -6,7 +6,7 @@ module Philosophal
 
     include Philosophal::Types
 
-    def cprop(name, type, default: nil, transform: nil, immutable: false)
+    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil)
       default.freeze if default && !(default.is_a?(Proc) || default.frozen?)
 
       if transform && !(transform.is_a?(Proc) || transform.is_a?(Symbol))
@@ -17,7 +17,13 @@ module Philosophal
         raise Philosophal::ArgumentError, 'immutable param must be true or false.'
       end
 
-      property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:)
+      if description
+        raise Philosophal::ArgumentError, 'description param must be a string.' unless description.is_a?(String)
+
+        description.freeze unless description.frozen?
+      end
+
+      property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:, description:)
 
       philosophal_properties << property
       __define_philosophal_methods__(property)
@@ -33,6 +39,18 @@ module Philosophal
                                   Philosophal::Properties::Schema.new
                                 end
     end
+
+    def philosophal_descriptions
+      return @philosophal_descriptions if defined?(@philosophal_descriptions)
+
+      @philosophal_descriptions = philosophal_properties.properties_index.values.select(&:description).to_h do |property|
+        [
+          property.name,
+          property.description
+        ]
+      end
+    end
+    alias cprop_descriptions philosophal_descriptions
 
     private
 
@@ -94,7 +112,10 @@ module Philosophal
       end
 
       new_property.generate_reader_method(buffer)
+
       new_property.generate_boolean_method(buffer) if new_property.type == Philosophal::Types::BooleanType::Instance
+
+      new_property.generate_description_method(buffer) if new_property.description
 
       # puts buffer
 

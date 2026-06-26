@@ -13,7 +13,7 @@ require 'time'
 class Person
   extend Philosophal::Properties
 
-  cprop :first_name, String
+  cprop :first_name, String, description: 'description of my first name property'
   cprop :last_name, String
   cprop :age, Integer
   cprop :size, Float

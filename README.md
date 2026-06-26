@@ -22,9 +22,9 @@ class Person
 end
 
 maxime = Person.new
-maxime.first_name = "Maxime"
-maxime.last_name = "Désécot"
-maxime.age = "40" 
+maxime.first_name = 'Maxime'
+maxime.last_name = 'Désécot'
+maxime.age = '40'
 puts maxime.inspect
 #<Person:0x00007da7088eed88 @first_name="maxime", @last_name="DÉSÉCOT", @age=40>
 ````
