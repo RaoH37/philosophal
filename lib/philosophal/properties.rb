@@ -7,7 +7,7 @@ module Philosophal
 
     include Philosophal::Types
 
-    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil)
+    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil, json: false)
       default.freeze if default && !(default.is_a?(Proc) || default.frozen?)
 
       if transform && !(transform.is_a?(Proc) || transform.is_a?(Symbol))
@@ -24,7 +24,15 @@ module Philosophal
         description.freeze unless description.frozen?
       end
 
-      property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:, description:)
+      if json
+        unless json.is_a?(TrueClass) || json.is_a?(String) || json.is_a?(Symbol)
+          raise Philosophal::ArgumentError, 'json param must be true or a String or a Symbol.'
+        end
+
+        json = json.to_sym if json.is_a?(String)
+      end
+
+      property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:, description:, json:)
 
       philosophal_properties << property
       __define_philosophal_methods__(property)
@@ -44,7 +52,9 @@ module Philosophal
     def philosophal_descriptions
       return @philosophal_descriptions if defined?(@philosophal_descriptions)
 
-      @philosophal_descriptions = philosophal_properties.properties_index.values.select(&:description).to_h do |property|
+      @philosophal_descriptions = philosophal_properties.properties_index.values
+                                                        .select(&:description)
+                                                        .to_h do |property|
         [
           property.name,
           property.description
@@ -56,7 +66,7 @@ module Philosophal
     def json
       return @json if defined?(@json)
 
-      @json = Philosophal::Loaders::JSONLoader.new(self)
+      @json = Philosophal::Loaders::JsonLoader.new(self)
     end
 
     private
@@ -93,12 +103,12 @@ module Philosophal
             end
 
             keys_str = keys_map.map { |k, v| [k, v.inspect].join(': ') }.join(', ')
-            "#{self.class}:#{format('0x00%x', (object_id << 1))} #{keys_str}"
+            "#{self.class}:#{format('0x00%x', object_id << 1)} #{keys_str}"
           end
           alias cprop_inspect philosophal_inspect
 
           def philosophal_inspect_map
-            self.class.philosophal_properties.properties_index.values.to_h do |property|
+            philosophal_values.to_h do |property|
               [
                 property.name,
                 send(property.name)
@@ -106,6 +116,23 @@ module Philosophal
             end
           end
           alias cprop_inspect_map philosophal_inspect_map
+
+          def philosophal_values
+            self.class.philosophal_properties.properties_index.values
+          end
+
+          def to_json_hash
+            philosophal_values.select(&:json).to_h do |property|
+              [
+                property.json_name,
+                send(property.name)
+              ]
+            end
+          end
+
+          def to_json(*_args)
+            to_json_hash.to_json
+          end
         end
       end
     end

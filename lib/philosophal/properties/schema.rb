@@ -29,11 +29,23 @@ module Philosophal
       end
 
       def immutables
-        @properties_index.select { |_, v| v.immutable }
+        return @immutables if defined?(@immutables)
+
+        @immutables = @properties_index.select { |_, v| v.immutable }
       end
 
       def mutables
-        @properties_index.reject { |_, v| v.immutable }
+        return @mutables if defined?(@mutables)
+
+        @mutables = @properties_index.reject { |_, v| v.immutable }
+      end
+
+      def json_names_h
+        return @json_names_h if defined?(@json_names_h)
+
+        @json_names_h = @properties_index.to_h do |key, property|
+          [property.json_name, key]
+        end
       end
     end
   end

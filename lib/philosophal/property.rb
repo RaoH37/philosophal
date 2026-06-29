@@ -2,16 +2,23 @@
 
 module Philosophal
   class Property
-    def initialize(name:, type:, default:, transform:, immutable:, description:)
+    def initialize(name:, type:, default:, transform:, immutable:, description:, json:)
       @name = name
       @type = type
       @default = default
       @transform = transform
       @immutable = immutable
       @description = description
+      @json = json
     end
 
-    attr_reader :name, :type, :default, :transform, :immutable, :description
+    attr_reader :name, :type, :default, :transform, :immutable, :description, :json
+
+    def json_name
+      return @json if @json.is_a?(Symbol)
+
+      @name
+    end
 
     def default?
       @default != nil
@@ -82,7 +89,7 @@ module Philosophal
         @name.name <<
         "_description\n  " \
         '%(' << @description << ')' \
-        "\nend\n"
+                                "\nend\n"
     end
   end
 end
