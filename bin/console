@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 require 'bundler/setup'
 require 'philosophal'
@@ -16,7 +16,7 @@ class Person
   cprop :birthday, Date
   cprop :job, String, default: 'developer', json: true
   cprop :what_time_is_it, Time, default: -> { Time.now }
-  cprop :email, String, transform: :downcase, json: true
+  cprop :email, String, transform: :downcase!, json: true
   cprop :refs, Array, transform: ->(x) { x.map(&:upcase) }
   cprop :is_male, _Boolean, json: true
   cprop :is_female, _Boolean, json: true
@@ -26,10 +26,12 @@ class Person
   cprop :any, _Any
 end
 
+@email = 'Maxime.Desecot@GMAIL.com'.downcase
+
 @person = Person.new
 @person.first_name = 'Maxime'
 @person.last_name = 'Désécot'
-@person.email = 'Maxime.Desecot@GMAIL.com'
+@person.email = @email
 
 require 'irb'
 IRB.start(__FILE__)
