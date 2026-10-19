@@ -27,7 +27,7 @@ module Philosophal
       def load_from_array(array)
         raise LoadError, 'invalid json parameter' if array.find { |hash| !hash.is_a?(Hash) }
 
-        array.map! do |hash|
+        array.map do |hash|
           load_from_hash(hash)
         end
       end
@@ -35,11 +35,11 @@ module Philosophal
       def load_from_hash(hash)
         obj = @klass.new
 
-        hash.each_key do |key|
+        hash.each do |key, value|
           setter = setter_from_key(key)
           next unless obj.respond_to?(setter)
 
-          obj.public_send(setter, hash.delete(key))
+          obj.public_send(setter, value)
         end
 
         obj

@@ -7,6 +7,7 @@
 - Fix: a property set to `false` is no longer replaced by its default value, and predicate methods (`prop?`) take the default into account
 - Fix: **ArrayOf** and **HashOf** instances are now really shared for the same subtypes, and **HashOf** accepts anonymous classes
 - Fix: descriptions are no longer evaluated as Ruby code (parentheses or `#{...}` in a description broke or ran code)
+- Fix: `json.load` no longer modifies the given hash or array, and accepts frozen hashes
 
 ## [1.0.0] - 2025-03-24
 

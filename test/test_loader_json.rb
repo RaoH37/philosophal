@@ -17,7 +17,7 @@ class TestLoaderJson < Minitest::Test
   end
 
   def test_from_hash
-    assert_person Person.json.load(HASH.dup)
+    assert_person Person.json.load(HASH)
   end
 
   def test_from_hash_with_json_names
@@ -47,7 +47,7 @@ class TestLoaderJson < Minitest::Test
   end
 
   def test_from_array
-    people = Person.json.load(Array.new(3) { HASH.dup })
+    people = Person.json.load(Array.new(3) { HASH })
 
     assert_equal 3, people.length
     people.each { |person| assert_person person }
@@ -84,7 +84,7 @@ class TestLoaderJson < Minitest::Test
   end
 
   def test_raise_for_array_with_non_hash
-    assert_raises(Philosophal::Loaders::LoadError) { Person.json.load([HASH.dup, 'Maxime']) }
+    assert_raises(Philosophal::Loaders::LoadError) { Person.json.load([HASH, 'Maxime']) }
   end
 
   def test_loader_is_memoized
@@ -92,10 +92,16 @@ class TestLoaderJson < Minitest::Test
   end
 
   def test_input_hash_is_not_modified
-    skip 'bug: load_from_hash deletes the keys of the given hash'
     hash = HASH.dup
     Person.json.load(hash)
 
     assert_equal HASH, hash
+  end
+
+  def test_input_array_is_not_modified
+    array = [HASH.dup]
+    Person.json.load(array)
+
+    assert_equal [HASH], array
   end
 end
