@@ -31,13 +31,10 @@ class TestProperties < Minitest::Test
   end
 
   def test_subclass_properties_do_not_leak_into_parent
-    skip 'bug: Schema#dup is shallow, so a subclass adds its properties to the parent index'
-
     refute_includes Person.philosophal_properties.keys, :civil_name
   end
 
   def test_parent_inspect_after_subclass_declares_property
-    skip 'bug: the parent sees the subclass property and raises NoMethodError when reading it'
     parent = build_class { cprop :name, String }
     Class.new(parent) { cprop :power, String }
 

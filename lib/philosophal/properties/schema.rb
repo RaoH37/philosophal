@@ -10,6 +10,14 @@ module Philosophal
         @mutex = Mutex.new
       end
 
+      # Called by #dup: a subclass gets its own index, so its properties do not leak into the parent.
+      def initialize_copy(source)
+        super
+        @properties_index = source.properties_index.dup
+        @mutex = Mutex.new
+        clear_caches
+      end
+
       attr_reader :properties_index
 
       def [](key)
@@ -23,6 +31,7 @@ module Philosophal
       def <<(value)
         @mutex.synchronize do
           @properties_index[value.name] = value
+          clear_caches
         end
 
         self
@@ -45,6 +54,14 @@ module Philosophal
 
         @json_names_h = @properties_index.to_h do |key, property|
           [property.json_name, key]
+        end
+      end
+
+      private
+
+      def clear_caches
+        %i[@immutables @mutables @json_names_h].each do |cache|
+          remove_instance_variable(cache) if instance_variable_defined?(cache)
         end
       end
     end
