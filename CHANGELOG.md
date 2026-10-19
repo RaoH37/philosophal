@@ -8,6 +8,7 @@
 - Fix: **ArrayOf** and **HashOf** instances are now really shared for the same subtypes, and **HashOf** accepts anonymous classes
 - Fix: descriptions are no longer evaluated as Ruby code (parentheses or `#{...}` in a description broke or ran code)
 - Fix: `json.load` no longer modifies the given hash or array, and accepts frozen hashes
+- Fix: `override: true` now also replaces a method defined in the class itself before `cprop`
 
 ## [1.0.0] - 2025-03-24
 

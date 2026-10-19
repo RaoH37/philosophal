@@ -75,6 +75,7 @@ module Philosophal
       new_property.method_generators.each do |method_name, generator|
         next unless new_property.override? || !method_defined?(method_name)
 
+        __remove_philosophal_own_method__(method_name) if new_property.override?
         new_property.public_send(generator, buffer)
       end
 
@@ -82,6 +83,14 @@ module Philosophal
       return buffer if buffer.empty?
 
       +"# frozen_string_philosophal: true\n" << buffer
+    end
+
+    # Generated methods live in an included module, so a method defined in the class itself
+    # would hide them: it is removed to let the property override it.
+    def __remove_philosophal_own_method__(method_name)
+      return unless method_defined?(method_name, false) || private_method_defined?(method_name, false)
+
+      remove_method(method_name)
     end
 
     def __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:)

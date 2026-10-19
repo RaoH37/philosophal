@@ -60,13 +60,42 @@ class TestProperties < Minitest::Test
   end
 
   def test_method_of_same_class_overridden_by_default
-    skip 'limitation: generated methods live in an included module, so a method of the class itself always wins'
     klass = build_class do
       define_method(:name) { 'original' }
       cprop :name, String, default: 'property'
     end
 
     assert_equal 'property', klass.new.name
+  end
+
+  def test_writer_of_same_class_overridden_by_default
+    klass = build_class do
+      attr_writer :age
+
+      cprop :age, Integer
+    end
+    obj = klass.new
+    obj.age = '40'
+
+    assert_equal 40, obj.age
+  end
+
+  def test_private_method_of_same_class_overridden_by_default
+    klass = build_class do
+      private define_method(:name) { 'original' }
+      cprop :name, String, default: 'property'
+    end
+
+    assert_equal 'property', klass.new.name
+  end
+
+  def test_method_of_same_class_kept_without_override
+    klass = build_class do
+      define_method(:name) { 'original' }
+      cprop :name, String, default: 'property', override: false
+    end
+
+    assert_equal 'original', klass.new.name
   end
 
   def test_method_defined_after_cprop_wins
