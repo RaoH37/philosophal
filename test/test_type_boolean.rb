@@ -3,6 +3,8 @@
 require_relative 'test_helper'
 
 class TestTypeBoolean < Minitest::Test
+  include ClassBuilder
+
   def test_accept_true
     foo = Person.new
     foo.is_male = true
@@ -61,12 +63,24 @@ class TestTypeBoolean < Minitest::Test
     refute_predicate Person.new, :is_male?
   end
 
+  def test_predicate_method_uses_default
+    obj = build_class { cprop :enabled, _Boolean, default: true }.new
+
+    assert_predicate obj, :enabled?
+  end
+
+  def test_predicate_method_is_false_when_set_to_false
+    obj = build_class { cprop :enabled, _Boolean, default: true }.new
+    obj.enabled = false
+
+    refute_predicate obj, :enabled?
+  end
+
   def test_predicate_method_only_for_boolean
     refute_respond_to Person.new, :first_name?
   end
 
   def test_reader_returns_false
-    skip 'bug: the reader does `@value || default`, so false is returned as nil'
     foo = Person.new
     foo.is_male = false
 

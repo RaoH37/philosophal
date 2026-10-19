@@ -45,7 +45,6 @@ class TestPropertyDefault < Minitest::Test
   end
 
   def test_false_value_is_not_replaced_by_default
-    skip 'bug: the reader does `@value || default`, so false falls back to the default'
     obj = build_class { cprop :enabled, _Boolean, default: true }.new
     obj.enabled = false
 

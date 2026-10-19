@@ -3,6 +3,7 @@
 - Breaking: minimum required Ruby version is now **3.3** (was 3.1)
 - Fix: converting a Numeric to **DateTime** no longer requires ActiveSupport (`Time.zone`)
 - Fix: properties declared in a subclass no longer leak into the parent class
+- Fix: a property set to `false` is no longer replaced by its default value, and predicate methods (`prop?`) take the default into account
 
 ## [1.0.0] - 2025-03-24
 

@@ -90,7 +90,7 @@ module Philosophal
     def generate_reader_method(buffer)
       buffer << <<~RUBY
         def #{reader_method_name.name}
-          @#{@name.name} || self.class.philosophal_properties[:#{@name.name}].default_value
+          @#{@name.name}.nil? ? self.class.philosophal_properties[:#{@name.name}].default_value : @#{@name.name}
         end
       RUBY
     end
@@ -104,7 +104,7 @@ module Philosophal
     def generate_boolean_method(buffer)
       buffer << <<~RUBY
         def #{boolean_method_name.name}
-          !!@#{@name.name}
+          !!#{reader_method_name.name}
         end
       RUBY
     end

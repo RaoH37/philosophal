@@ -17,6 +17,13 @@ class TestJson < Minitest::Test
     assert_equal 'Désécot', hash[:LastName]
   end
 
+  def test_generated_json_keeps_false
+    @person.is_male = false
+    hash = JSON.parse(@person.to_json, symbolize_names: true)
+
+    assert_equal false, hash[:is_male] # rubocop:disable Minitest/RefuteFalse
+  end
+
   def test_generated_json_with_property_name
     hash = JSON.parse(@person.to_json, symbolize_names: true)
 
@@ -53,7 +60,7 @@ class TestJson < Minitest::Test
     @person.age = 40
     @person.size = 1.82
     @person.is_male = true
-    @person.is_female = true
+    @person.is_female = false
     @person.eyes_color = 'blue'
     person = Person.json.load(@person.to_json)
 
