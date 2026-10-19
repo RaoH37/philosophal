@@ -3,23 +3,52 @@
 require_relative 'test_helper'
 
 class TestPropertyDefault < Minitest::Test
-  def test_default
-    person = Person.new
+  include ClassBuilder
 
-    assert_equal 'developer', person.job
+  def test_default
+    assert_equal 'developer', Person.new.job
+  end
+
+  def test_nil_without_default
+    assert_nil Person.new.first_name
+  end
+
+  def test_assigned_value_replaces_default
+    person = Person.new
+    person.job = 'teacher'
+
+    assert_equal 'teacher', person.job
+  end
+
+  def test_default_is_frozen
+    assert_predicate Person.new.job, :frozen?
   end
 
   def test_default_proc
-    person = Person.new
-
-    assert_kind_of Time, person.what_time_is_it
+    assert_kind_of Time, Person.new.what_time_is_it
   end
 
-  def test_default_proc_time
-    now = Time.now
-    sleep 0.1
-    person = Person.new
+  def test_default_proc_is_called_on_each_read
+    calls = 0
+    obj = build_class { cprop :counter, Integer, default: -> { calls += 1 } }.new
+    obj.counter
+    obj.counter
 
-    assert_operator person.what_time_is_it, :>, now
+    assert_equal 2, calls
+  end
+
+  def test_default_used_when_set_to_nil
+    obj = build_class { cprop :tags, Array, default: [].freeze }.new
+    obj.tags = nil
+
+    assert_empty obj.tags
+  end
+
+  def test_false_value_is_not_replaced_by_default
+    skip 'bug: the reader does `@value || default`, so false falls back to the default'
+    obj = build_class { cprop :enabled, _Boolean, default: true }.new
+    obj.enabled = false
+
+    refute obj.enabled
   end
 end

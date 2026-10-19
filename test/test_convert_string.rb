@@ -3,7 +3,7 @@
 require_relative 'test_helper'
 
 class TestConvertString < Minitest::Test
-  def test_convert_string_as_string
+  def test_keep_string
     foo = Person.new
     foo.first_name = 'Maxime'
 
@@ -17,20 +17,25 @@ class TestConvertString < Minitest::Test
     assert_equal '12345', foo.first_name
   end
 
-  def test_convert_float_as_strng
+  def test_convert_float_as_string
     foo = Person.new
     foo.first_name = 12.345
 
     assert_equal '12.345', foo.first_name
   end
 
+  def test_convert_symbol_as_string
+    foo = Person.new
+    foo.first_name = :maxime
+
+    assert_equal 'maxime', foo.first_name
+  end
+
   def test_convert_time_as_string
     now = Time.now
-    now_str = now.to_s
-
     foo = Person.new
     foo.first_name = now
 
-    assert_equal now_str, foo.first_name
+    assert_equal now.to_s, foo.first_name
   end
 end

@@ -3,36 +3,39 @@
 require_relative 'test_helper'
 
 class TestConvertTime < Minitest::Test
-  def test_convert_string_as_date
-    format = '%Y-%m-%d %H:%M:%S'
-    now = Time.now
-    now_str = now.strftime(format)
+  TIME = Time.new(2025, 3, 24, 10, 20, 30)
 
+  def test_keep_time
     foo = Person.new
-    foo.what_time_is_it = now_str
+    foo.what_time_is_it = TIME
 
-    assert_equal now.strftime(format), foo.what_time_is_it.strftime(format)
+    assert_equal TIME, foo.what_time_is_it
+  end
+
+  def test_convert_string_as_time
+    foo = Person.new
+    foo.what_time_is_it = '2025-03-24 10:20:30'
+
+    assert_equal TIME, foo.what_time_is_it
   end
 
   def test_convert_array_as_time
-    format = '%Y-%m-%d %H:%M:%S'
-    now = Time.now
-    array = [now.year, now.month, now.day, now.hour, now.min, now.sec]
-
     foo = Person.new
-    foo.what_time_is_it = array
+    foo.what_time_is_it = [2025, 3, 24, 10, 20, 30]
 
-    assert_equal now.strftime(format), foo.what_time_is_it.strftime(format)
+    assert_equal TIME, foo.what_time_is_it
   end
 
-  def test_convert_integer_as_date
-    format = '%Y-%m-%d %H:%M:%S'
-    now = Time.now
-    int = now.to_i
-
+  def test_convert_integer_as_time
     foo = Person.new
-    foo.what_time_is_it = int
+    foo.what_time_is_it = TIME.to_i
 
-    assert_equal now.strftime(format), foo.what_time_is_it.strftime(format)
+    assert_equal TIME, foo.what_time_is_it
+  end
+
+  def test_raise_when_not_convertible
+    foo = Person.new
+
+    assert_raises(Philosophal::TypeError) { foo.what_time_is_it = Object.new }
   end
 end

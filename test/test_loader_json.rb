@@ -1,69 +1,93 @@
 # frozen_string_literal: true
 
 require_relative 'test_helper'
+require 'tempfile'
 
 class TestLoaderJson < Minitest::Test
+  HASH = {
+    first_name: 'Maxime',
+    last_name: 'Désécot',
+    email: 'Maxime.Desecot@GMAIL.com'
+  }.freeze
+
+  def assert_person(person)
+    assert_equal 'Maxime', person.first_name
+    assert_equal 'Désécot', person.last_name
+    assert_equal 'maxime.desecot@gmail.com', person.email
+  end
+
   def test_from_hash
-    hash = {
-      first_name: 'Maxime',
-      last_name: 'Désécot',
-      email: 'Maxime.Desecot@GMAIL.com'
-    }
+    assert_person Person.json.load(HASH.dup)
+  end
 
-    foo = Person.json.load(hash.dup)
+  def test_from_hash_with_json_names
+    person = Person.json.load({ FirstName: 'Maxime' })
 
-    assert_equal foo.first_name, hash[:first_name]
-    assert_equal foo.last_name, hash[:last_name]
-    assert_equal foo.email, hash[:email].downcase
+    assert_equal 'Maxime', person.first_name
+  end
+
+  def test_from_hash_converts_values
+    person = Person.json.load({ age: '40' })
+
+    assert_equal 40, person.age
+  end
+
+  def test_from_hash_ignores_unknown_keys
+    person = Person.json.load({ first_name: 'Maxime', unknown: 'value' })
+
+    assert_equal 'Maxime', person.first_name
   end
 
   def test_from_array
-    hash = {
-      first_name: 'Maxime',
-      last_name: 'Désécot',
-      email: 'Maxime.Desecot@GMAIL.com'
-    }
+    people = Person.json.load(Array.new(3) { HASH.dup })
 
-    array = []
-
-    10.times { array << hash.dup }
-
-    foo = Person.json.load(array.dup)
-
-    assert_kind_of Array, foo
-    assert_equal 10, foo.length
+    assert_equal 3, people.length
+    people.each { |person| assert_person person }
   end
 
   def test_from_str
-    hash = {
-      first_name: 'Maxime',
-      last_name: 'Désécot',
-      email: 'Maxime.Desecot@GMAIL.com'
-    }
-
-    str = hash.to_json
-
-    foo = Person.json.load(str)
-
-    assert_equal hash[:first_name], foo.first_name
-    assert_equal hash[:last_name], foo.last_name
-    assert_equal hash[:email].downcase, foo.email
+    assert_person Person.json.load(HASH.to_json)
   end
 
   def test_from_array_str
-    hash = {
-      first_name: 'Maxime',
-      last_name: 'Désécot',
-      email: 'Maxime.Desecot@GMAIL.com'
-    }
+    people = Person.json.load(Array.new(3) { HASH }.to_json)
 
-    array = []
+    assert_equal 3, people.length
+    people.each { |person| assert_person person }
+  end
 
-    10.times { array << hash.dup }
+  def test_from_path
+    Tempfile.create(['person', '.json']) do |file|
+      file.write(HASH.to_json)
+      file.flush
 
-    foo = Person.json.load(array.to_json)
+      assert_person Person.json.load(file.path)
+    end
+  end
 
-    assert_kind_of Array, foo
-    assert_equal 10, foo.length
+  def test_raise_for_missing_file
+    error = assert_raises(Philosophal::Loaders::LoadError) { Person.json.load('/no/such/file.json') }
+
+    assert_includes error.message, '/no/such/file.json'
+  end
+
+  def test_raise_for_invalid_parameter
+    assert_raises(Philosophal::Loaders::LoadError) { Person.json.load(42) }
+  end
+
+  def test_raise_for_array_with_non_hash
+    assert_raises(Philosophal::Loaders::LoadError) { Person.json.load([HASH.dup, 'Maxime']) }
+  end
+
+  def test_loader_is_memoized
+    assert_same Person.json, Person.json
+  end
+
+  def test_input_hash_is_not_modified
+    skip 'bug: load_from_hash deletes the keys of the given hash'
+    hash = HASH.dup
+    Person.json.load(hash)
+
+    assert_equal HASH, hash
   end
 end

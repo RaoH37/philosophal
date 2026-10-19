@@ -10,6 +10,18 @@ require 'minitest/autorun'
 require 'date'
 require 'time'
 
+module ClassBuilder
+  # Builds an anonymous class extended with Philosophal::Properties,
+  # so a test can declare its own properties without touching the shared fixtures.
+  def build_class(superclass = Object, &block)
+    Class.new(superclass) do
+      extend Philosophal::Properties
+
+      class_eval(&block) if block
+    end
+  end
+end
+
 class Person
   extend Philosophal::Properties
 
