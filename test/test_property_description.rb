@@ -21,15 +21,20 @@ class TestPropertyDescription < Minitest::Test
     assert_equal({ first_name: 'description of my first name property' }, Person.cprop_descriptions)
   end
 
+  def test_description_with_quotes_and_newline
+    description = %(the "name"\nor 'nickname')
+    klass = build_class { cprop :name, String, description: }
+
+    assert_equal description, klass.new.name_description
+  end
+
   def test_description_with_parentheses
-    skip 'bug: the description is written inside %(...) in generated code'
     klass = build_class { cprop :name, String, description: 'the name (or nickname' }
 
     assert_equal 'the name (or nickname', klass.new.name_description
   end
 
   def test_description_is_not_interpolated
-    skip 'bug: the description is evaluated as Ruby code, so #{...} is interpolated'
     klass = build_class { cprop :name, String, description: 'value: #{1 + 1}' } # rubocop:disable Lint/InterpolationCheck
 
     assert_equal 'value: #{1 + 1}', klass.new.name_description # rubocop:disable Lint/InterpolationCheck

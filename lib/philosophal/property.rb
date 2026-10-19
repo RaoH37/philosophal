@@ -115,13 +115,14 @@ module Philosophal
       @description_method_name = :"#{@name.name}_description"
     end
 
+    # The description is read from the schema rather than written into the generated code,
+    # so it is never evaluated as Ruby.
     def generate_description_method(buffer)
-      buffer <<
-        ' def ' <<
-        description_method_name.name <<
-        "\n  " \
-        '%(' << @description << ')' \
-                                "\nend\n"
+      buffer << <<~RUBY
+        def #{description_method_name.name}
+          self.class.philosophal_properties[:#{@name.name}].description
+        end
+      RUBY
     end
   end
 end
