@@ -3,38 +3,17 @@
 module Philosophal
   module Properties
     autoload :Schema, 'philosophal/properties/schema'
+    autoload :InstanceMethods, 'philosophal/properties/instance_methods'
     autoload :JSONLoader, 'philosophal/loaders/json_loader'
 
     include Philosophal::Types
 
     def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil, json: false, override: true)
-      default.freeze if default && !(default.is_a?(Proc) || default.frozen?)
+      __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:)
 
-      if transform && !(transform.is_a?(Proc) || transform.is_a?(Symbol))
-        raise Philosophal::ArgumentError, "transform param must be a Symbol object or a Proc (#{name})."
-      end
-
-      unless Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(override)
-        raise Philosophal::ArgumentError, 'override param must be true or false.'
-      end
-
-      unless Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(immutable)
-        raise Philosophal::ArgumentError, 'immutable param must be true or false.'
-      end
-
-      if description
-        raise Philosophal::ArgumentError, 'description param must be a string.' unless description.is_a?(String)
-
-        description.freeze unless description.frozen?
-      end
-
-      if json
-        unless json.is_a?(TrueClass) || json.is_a?(String) || json.is_a?(Symbol)
-          raise Philosophal::ArgumentError, 'json param must be true or a String or a Symbol.'
-        end
-
-        json = json.to_sym if json.is_a?(String)
-      end
+      default.freeze unless default.is_a?(Proc)
+      description&.freeze
+      json = json.to_sym if json.is_a?(String)
 
       property = __philosophal_property_class__.new(
         name:, type:, default:, transform:, immutable:, description:, json:, override:
@@ -87,89 +66,48 @@ module Philosophal
     end
 
     def __philosophal_extension__
-      if defined?(@__philosophal_extension__)
-        @__philosophal_extension__
-      else
-        @__philosophal_extension__ = Module.new do
-          def cprop?(property_name, klass)
-            property = self.class.philosophal_properties.properties_index[property_name.to_sym]
-            return false unless property
-
-            klass = klass.class unless klass.is_a?(Class)
-            property.type == klass
-          end
-
-          def philosophal_inspect(light = false)
-            keys_map = philosophal_inspect_map
-
-            if light
-              keys_map.reject! do |_, v|
-                v.nil? || (v.respond_to?(:empty?) && v.empty?)
-              end
-            end
-
-            keys_str = keys_map.map { |k, v| [k, v.inspect].join(': ') }.join(', ')
-            "#{self.class}:#{format('0x00%x', object_id << 1)} #{keys_str}"
-          end
-          alias cprop_inspect philosophal_inspect
-
-          def philosophal_inspect_map
-            philosophal_values.to_h do |property|
-              [
-                property.name,
-                send(property.name)
-              ]
-            end
-          end
-          alias cprop_inspect_map philosophal_inspect_map
-
-          def philosophal_values
-            self.class.philosophal_properties.properties_index.values
-          end
-
-          def to_json_hash
-            philosophal_values.select(&:json).to_h do |property|
-              [
-                property.json_name,
-                send(property.name)
-              ]
-            end
-          end
-
-          def to_json(*_args)
-            to_json_hash.to_json
-          end
-        end
-      end
+      @__philosophal_extension__ ||= Module.new { include Philosophal::Properties::InstanceMethods }
     end
 
     def __generate_philosophal_methods__(new_property)
       buffer = +''
 
-      if new_property.override? || !instance_methods.include?(new_property.writer_method_name)
-        if new_property.immutable
-          new_property.generate_immutable_writer_method(buffer)
-        else
-          new_property.generate_writer_method(buffer)
-        end
-      end
+      new_property.method_generators.each do |method_name, generator|
+        next unless new_property.override? || !method_defined?(method_name)
 
-      if new_property.override? || !instance_methods.include?(new_property.reader_method_name)
-        new_property.generate_reader_method(buffer)
-      end
-
-      if new_property.type == Philosophal::Types::BooleanType::Instance && (new_property.override? || !instance_methods.include?(new_property.boolean_method_name))
-        new_property.generate_boolean_method(buffer)
-      end
-
-      if new_property.description && (new_property.override? || !instance_methods.include?(new_property.description_method_name))
-        new_property.generate_description_method(buffer)
+        new_property.public_send(generator, buffer)
       end
 
       # puts buffer
       return buffer if buffer.empty?
 
       +"# frozen_string_philosophal: true\n" << buffer
+    end
+
+    def __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:)
+      __check_philosophal_transform_option__(name, transform)
+      __check_philosophal_boolean_option__(:override, override)
+      __check_philosophal_boolean_option__(:immutable, immutable)
+
+      if description && !description.is_a?(String)
+        raise Philosophal::ArgumentError, 'description param must be a string.'
+      end
+
+      return if !json || json == true || json.is_a?(String) || json.is_a?(Symbol)
+
+      raise Philosophal::ArgumentError, 'json param must be true or a String or a Symbol.'
+    end
+
+    def __check_philosophal_transform_option__(name, transform)
+      return if !transform || transform.is_a?(Proc) || transform.is_a?(Symbol)
+
+      raise Philosophal::ArgumentError, "transform param must be a Symbol object or a Proc (#{name})."
+    end
+
+    def __check_philosophal_boolean_option__(option_name, value)
+      return if Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(value)
+
+      raise Philosophal::ArgumentError, "#{option_name} param must be true or false."
     end
   end
 end

@@ -44,6 +44,16 @@ module Philosophal
       Philosophal.convert(self, value)
     end
 
+    def method_generators
+      generators = {
+        writer_method_name => immutable ? :generate_immutable_writer_method : :generate_writer_method,
+        reader_method_name => :generate_reader_method
+      }
+      generators[boolean_method_name] = :generate_boolean_method if type == Philosophal::Types::BooleanType::Instance
+      generators[description_method_name] = :generate_description_method if description
+      generators
+    end
+
     def writer_method_name
       return @writer_method_name if defined? @writer_method_name
 
@@ -51,27 +61,26 @@ module Philosophal
     end
 
     def generate_writer_method(buffer)
-      buffer <<
-        ' def ' << writer_method_name.name << "(value)\n  " \
-                                         '@' << @name.name << ' = self.class.philosophal_properties[:' <<
-        @name.name <<
-        "].check_conversion(value)\n" \
-        "rescue Philosophal::TypeError => error\n" \
-        "error.set_backtrace(caller(1))\n  raise\n" \
-        "end\n"
+      buffer << <<~RUBY
+        def #{writer_method_name.name}(value)
+          @#{@name.name} = self.class.philosophal_properties[:#{@name.name}].check_conversion(value)
+        rescue Philosophal::TypeError => error
+          error.set_backtrace(caller(1))
+          raise
+        end
+      RUBY
     end
 
     def generate_immutable_writer_method(buffer)
-      buffer <<
-        ' def ' << writer_method_name.name << "(value)\n  " \
-                                 'raise FrozenError, "can\'t modify frozen variable @' <<
-        @name.name << '" if defined?(@' << @name.name << ")\n" \
-                                                         '@' << @name.name << ' = self.class.philosophal_properties[:' <<
-        @name.name <<
-        "].check_conversion(value).freeze\n" \
-        "rescue Philosophal::TypeError => error\n" \
-        "error.set_backtrace(caller(1))\n  raise\n" \
-        "end\n"
+      buffer << <<~RUBY
+        def #{writer_method_name.name}(value)
+          raise FrozenError, "can't modify frozen variable @#{@name.name}" if defined?(@#{@name.name})
+          @#{@name.name} = self.class.philosophal_properties[:#{@name.name}].check_conversion(value).freeze
+        rescue Philosophal::TypeError => error
+          error.set_backtrace(caller(1))
+          raise
+        end
+      RUBY
     end
 
     def reader_method_name
@@ -79,14 +88,11 @@ module Philosophal
     end
 
     def generate_reader_method(buffer)
-      buffer <<
-        ' def ' <<
-        reader_method_name.name <<
-        "\n  " \
-        '@' << @name.name << ' || self.class.philosophal_properties[:' <<
-        @name.name <<
-        "].default_value\n" \
-        "end\n"
+      buffer << <<~RUBY
+        def #{reader_method_name.name}
+          @#{@name.name} || self.class.philosophal_properties[:#{@name.name}].default_value
+        end
+      RUBY
     end
 
     def boolean_method_name
@@ -96,12 +102,11 @@ module Philosophal
     end
 
     def generate_boolean_method(buffer)
-      buffer <<
-        ' def ' <<
-        boolean_method_name.name <<
-        "\n  " \
-        '!!@' << @name.name <<
-        "\nend\n"
+      buffer << <<~RUBY
+        def #{boolean_method_name.name}
+          !!@#{@name.name}
+        end
+      RUBY
     end
 
     def description_method_name

@@ -19,25 +19,21 @@ module Philosophal
   autoload :ArgumentError, 'philosophal/errors/argument_error'
 
   def self.convert(property, value)
-    if property.type === value
-      if property.transform?
-        Transform.make(property.transform, value)
-      else
-        value
-      end
+    converted = property.type === value ? value : convert_to_type(property.type, value) # rubocop:disable Style/CaseEquality
+    return converted unless property.transform?
+
+    Transform.make(property.transform, converted)
+  end
+
+  def self.convert_to_type(type, value)
+    convert_method, subtype = Convertor.convert_method_for(type)
+    raise Philosophal::TypeError unless convert_method
+
+    if subtype
+      Convertor.send(convert_method, value, subtype)
     else
-      convert_method, subtype = Convertor.convert_method_for(property.type)
-      raise Philosophal::TypeError unless convert_method
-
-      converted = if subtype
-                    Convertor.send(convert_method, value, subtype)
-                  else
-                    Convertor.send(convert_method, value)
-                  end
-
-      return converted unless property.transform?
-
-      Transform.make(property.transform, converted)
+      Convertor.send(convert_method, value)
     end
   end
+  private_class_method :convert_to_type
 end

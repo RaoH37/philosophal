@@ -3,17 +3,10 @@
 module Philosophal
   class Transform
     def self.make(method, value)
-      case method
-      when Proc
-        method.call(value)
-      else
-        if self_method?(method)
-          value.send(method)
-          value
-        else
-          value.send(method)
-        end
-      end
+      return method.call(value) if method.is_a?(Proc)
+
+      result = value.send(method)
+      self_method?(method) ? value : result
     end
 
     def self.self_method?(method)

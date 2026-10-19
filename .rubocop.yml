@@ -1,8 +1,8 @@
-require:
+plugins:
+  - rubocop-md
   - rubocop-minitest
   - rubocop-packaging
   - rubocop-performance
-  - rubocop-md
 
 AllCops:
   TargetRubyVersion: 3.3
@@ -10,3 +10,28 @@ AllCops:
 
 Style/Documentation:
   Enabled: false
+
+# Type helpers (_Boolean, _ArrayOf, ...) are part of the public DSL.
+Naming/MethodName:
+  AllowedPatterns:
+    - '\A_[A-Z]'
+
+# cprop and Property#initialize take keyword arguments.
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+# Changing `light` to a keyword argument would break cprop_inspect(true).
+Style/OptionalBooleanParameter:
+  AllowedMethods:
+    - philosophal_inspect
+
+# bin/console and the test helper define sample classes.
+Style/OneClassPerFile:
+  Exclude:
+    - 'bin/**/*'
+    - 'test/test_helper.rb'
+
+# Convertor is a flat list of one converter per supported type.
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/philosophal/convertor.rb'
