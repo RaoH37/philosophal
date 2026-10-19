@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary = 'Philosophal setter convertor'
   spec.description = 'Auto convert value on setter method call'
   spec.homepage = 'https://github.com/RaoH37/philosophal'
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.3'
 
   spec.license = 'GPL-3.0-only'
 

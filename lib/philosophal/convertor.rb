@@ -87,7 +87,7 @@ module Philosophal
         return obj.to_datetime if obj.respond_to?(:to_datetime)
         return DateTime.new(*obj) if obj.is_a?(Array)
         return DateTime.parse(obj) if obj.is_a?(String)
-        return Time.zone.at(obj).to_datetime if obj.is_a?(Numeric)
+        return Time.at(obj).to_datetime if obj.is_a?(Numeric)
 
         raise Philosophal::TypeError
       end

@@ -2,7 +2,6 @@
 
 require 'date'
 require 'pathname'
-require 'set'
 require 'time'
 require 'json'
 

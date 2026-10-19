@@ -1,4 +1,7 @@
-## [Unreleased]
+## [1.3.0] - 2026-10-19
+
+- Breaking: minimum required Ruby version is now **3.3** (was 3.1)
+- Fix: converting a Numeric to **DateTime** no longer requires ActiveSupport (`Time.zone`)
 
 ## [1.0.0] - 2025-03-24
 

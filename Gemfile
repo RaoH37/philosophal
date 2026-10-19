@@ -2,9 +2,12 @@
 
 source 'https://rubygems.org'
 
+ruby '>= 3.3'
+
 gemspec
 
 gem 'minitest', '~> 5.0'
+gem 'rake'
 
 group :rubocop do
   gem 'rubocop', '>= 1.25.1', require: false
