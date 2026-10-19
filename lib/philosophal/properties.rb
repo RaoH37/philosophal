@@ -7,11 +7,15 @@ module Philosophal
 
     include Philosophal::Types
 
-    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil, json: false)
+    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil, json: false, override: true)
       default.freeze if default && !(default.is_a?(Proc) || default.frozen?)
 
       if transform && !(transform.is_a?(Proc) || transform.is_a?(Symbol))
         raise Philosophal::ArgumentError, "transform param must be a Symbol object or a Proc (#{name})."
+      end
+
+      unless Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(override)
+        raise Philosophal::ArgumentError, 'override param must be true or false.'
       end
 
       unless Philosophal::Types::BooleanType::TRUE_FALSE_SET.include?(immutable)
@@ -32,7 +36,9 @@ module Philosophal
         json = json.to_sym if json.is_a?(String)
       end
 
-      property = __philosophal_property_class__.new(name:, type:, default:, transform:, immutable:, description:, json:)
+      property = __philosophal_property_class__.new(
+        name:, type:, default:, transform:, immutable:, description:, json:, override:
+      )
 
       philosophal_properties << property
       __define_philosophal_methods__(property)
@@ -137,23 +143,33 @@ module Philosophal
       end
     end
 
-    def __generate_philosophal_methods__(new_property, buffer = +'')
-      buffer << "# frozen_string_philosophal: true\n"
-      if new_property.immutable
-        new_property.generate_immutable_writer_method(buffer)
-      else
-        new_property.generate_writer_method(buffer)
+    def __generate_philosophal_methods__(new_property)
+      buffer = +''
+
+      if new_property.override? || !instance_methods.include?(new_property.writer_method_name)
+        if new_property.immutable
+          new_property.generate_immutable_writer_method(buffer)
+        else
+          new_property.generate_writer_method(buffer)
+        end
       end
 
-      new_property.generate_reader_method(buffer)
+      if new_property.override? || !instance_methods.include?(new_property.reader_method_name)
+        new_property.generate_reader_method(buffer)
+      end
 
-      new_property.generate_boolean_method(buffer) if new_property.type == Philosophal::Types::BooleanType::Instance
+      if new_property.type == Philosophal::Types::BooleanType::Instance && (new_property.override? || !instance_methods.include?(new_property.boolean_method_name))
+        new_property.generate_boolean_method(buffer)
+      end
 
-      new_property.generate_description_method(buffer) if new_property.description
+      if new_property.description && (new_property.override? || !instance_methods.include?(new_property.description_method_name))
+        new_property.generate_description_method(buffer)
+      end
 
       # puts buffer
+      return buffer if buffer.empty?
 
-      buffer
+      +"# frozen_string_philosophal: true\n" << buffer
     end
   end
 end

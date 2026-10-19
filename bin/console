@@ -24,6 +24,14 @@ class Person
   cprop :sports, _ArrayOf(String), transform: ->(x) { x.map(&:upcase) }
   cprop :priorities, _HashOf(Symbol, String)
   cprop :any, _Any
+
+  def nickname
+    'Clark Kent'
+  end
+end
+
+class SuperHero < Person
+  cprop :nickname, String, default: 'Wonderwoman', override: false
 end
 
 @email = 'Maxime.Desecot@GMAIL.com'.downcase

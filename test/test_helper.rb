@@ -28,4 +28,12 @@ class Person
   cprop :sports, _ArrayOf(String), transform: ->(x) { x.map(&:upcase) }
   cprop :priorities, _HashOf(Symbol, String)
   cprop :any, _Any
+
+  def civil_name
+    'Clark Kent'
+  end
+end
+
+class SuperHero < Person
+  cprop :civil_name, String, default: 'Maxime', override: false
 end
