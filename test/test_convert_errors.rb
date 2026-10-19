@@ -24,6 +24,34 @@ class TestConvertErrors < Minitest::Test
     assert_equal(/a+/, obj.pattern)
   end
 
+  def test_nil_is_not_converted_to_zero
+    obj = build_class { cprop :age, Integer }.new
+    obj.age = nil
+
+    assert_nil obj.age
+  end
+
+  def test_nil_is_not_converted_to_empty_string
+    obj = build_class { cprop :name, String }.new
+    obj.name = nil
+
+    assert_nil obj.name
+  end
+
+  def test_nil_is_not_converted_to_boolean
+    obj = build_class { cprop :enabled, _Boolean }.new
+    obj.enabled = nil
+
+    assert_nil obj.enabled
+  end
+
+  def test_nil_is_not_transformed
+    obj = build_class { cprop :name, String, transform: :upcase }.new
+    obj.name = nil
+
+    assert_nil obj.name
+  end
+
   def test_type_error_is_a_ruby_type_error
     assert_operator Philosophal::TypeError, :<, ::TypeError
   end

@@ -38,6 +38,14 @@ class TestLoaderJson < Minitest::Test
     assert_equal 'Maxime', person.first_name
   end
 
+  def test_from_hash_with_null_values
+    person = Person.json.load({ age: nil, is_male: nil, job: nil })
+
+    assert_nil person.age
+    assert_nil person.is_male
+    assert_equal 'developer', person.job
+  end
+
   def test_from_array
     people = Person.json.load(Array.new(3) { HASH.dup })
 

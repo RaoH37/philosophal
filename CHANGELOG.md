@@ -1,6 +1,7 @@
 ## [1.3.0] - 2026-10-19
 
 - Breaking: minimum required Ruby version is now **3.3** (was 3.1)
+- Breaking: assigning `nil` no longer converts it (e.g. to `0` or `""`); the property is reset and its reader returns the default value
 - Fix: converting a Numeric to **DateTime** no longer requires ActiveSupport (`Time.zone`)
 - Fix: properties declared in a subclass no longer leak into the parent class
 - Fix: a property set to `false` is no longer replaced by its default value, and predicate methods (`prop?`) take the default into account

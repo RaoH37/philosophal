@@ -68,7 +68,6 @@ class TestJson < Minitest::Test
   end
 
   def test_round_trip_with_unset_values
-    skip 'bug: unset values are exported as null, and null cannot be converted back (e.g. to a boolean)'
     person = Person.json.load(@person.to_json)
 
     assert_equal @person.to_json_hash, person.to_json_hash

@@ -19,6 +19,9 @@ module Philosophal
   autoload :ArgumentError, 'philosophal/errors/argument_error'
 
   def self.convert(property, value)
+    # nil means "no value": it is neither converted nor transformed, so the reader falls back to the default.
+    return if value.nil?
+
     converted = property.type === value ? value : convert_to_type(property.type, value) # rubocop:disable Style/CaseEquality
     return converted unless property.transform?
 
