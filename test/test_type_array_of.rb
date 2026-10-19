@@ -41,9 +41,16 @@ class TestTypeArrayOf < Minitest::Test
     refute_operator type, :===, 'a'
   end
 
-  def test_same_instance_for_same_subtype
-    skip 'bug: Hash#fetch evaluates its default eagerly, so a new instance is always built'
+  def test_different_instances_for_different_subtypes
+    refute_same Philosophal::Types::ArrayOfType.instance(String),
+                Philosophal::Types::ArrayOfType.instance(Integer)
+  end
 
+  def test_instance_is_frozen
+    assert_predicate Philosophal::Types::ArrayOfType.instance(String), :frozen?
+  end
+
+  def test_same_instance_for_same_subtype
     assert_same Philosophal::Types::ArrayOfType.instance(String),
                 Philosophal::Types::ArrayOfType.instance(String)
   end

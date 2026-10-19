@@ -4,7 +4,7 @@ module Philosophal
   module Types
     class ArrayOfType
       def self.instance(subtype)
-        memorization.fetch(subtype, new(subtype).freeze)
+        memorization[subtype] ||= new(subtype).freeze
       end
 
       def self.memorization
@@ -13,11 +13,12 @@ module Philosophal
         @memorization = {}
       end
 
+      private_class_method :new
+
       attr_reader :subtype
 
       def initialize(subtype)
         @subtype = subtype
-        self.class.memorization[subtype] = self
       end
 
       def ===(array)

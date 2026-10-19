@@ -32,9 +32,18 @@ class TestTypeHashOf < Minitest::Test
     refute_operator type, :===, { a: 1 }
   end
 
-  def test_same_instance_for_same_subtypes
-    skip 'bug: Hash#fetch evaluates its default eagerly, so a new instance is always built'
+  def test_different_instances_for_different_subtypes
+    refute_same Philosophal::Types::HashOfType.instance(Symbol, String),
+                Philosophal::Types::HashOfType.instance(String, Symbol)
+  end
 
+  def test_accept_anonymous_class
+    klass = Class.new
+
+    assert_operator Philosophal::Types::HashOfType.instance(Symbol, klass), :===, { a: klass.new }
+  end
+
+  def test_same_instance_for_same_subtypes
     assert_same Philosophal::Types::HashOfType.instance(Symbol, String),
                 Philosophal::Types::HashOfType.instance(Symbol, String)
   end
