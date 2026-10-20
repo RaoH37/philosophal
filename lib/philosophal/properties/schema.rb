@@ -28,6 +28,14 @@ module Philosophal
         @properties_index.keys
       end
 
+      # Yields each property in declaration order; Enumerable builds on it.
+      def each(&)
+        return enum_for(:each) { @properties_index.size } unless block_given?
+
+        @properties_index.each_value(&)
+        self
+      end
+
       def <<(value)
         @mutex.synchronize do
           @properties_index[value.name] = value

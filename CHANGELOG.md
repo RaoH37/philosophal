@@ -1,3 +1,7 @@
+## [Unreleased]
+
+- Fix: `Properties::Schema` now defines `each`, so its Enumerable methods (`map`, `select`, `find`...) work and yield the properties
+
 ## [1.3.0] - 2026-10-19
 
 - Breaking: minimum required Ruby version is now **3.3** (was 3.1)

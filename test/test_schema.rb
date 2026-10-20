@@ -34,6 +34,27 @@ class TestSchema < Minitest::Test
     assert_equal :email, @schema.json_names_h[:email]
   end
 
+  def test_each_yields_properties_in_declaration_order
+    assert_equal @schema.properties_index.values, @schema.to_a
+  end
+
+  def test_each_returns_the_schema
+    assert_same(@schema, @schema.each { nil })
+  end
+
+  def test_each_without_block_returns_a_sized_enumerator
+    enumerator = @schema.each
+
+    assert_kind_of Enumerator, enumerator
+    assert_equal @schema.keys.size, enumerator.size
+  end
+
+  def test_enumerable_methods
+    assert_equal @schema.keys, @schema.map(&:name)
+    assert_equal %i[eyes_color], @schema.select(&:immutable).map(&:name)
+    assert_equal(@schema[:age], @schema.find { |property| property.type == Integer })
+  end
+
   def test_dup_has_its_own_index
     copy = @schema.dup
     copy << Philosophal::Property.new(name: :extra, type: String, default: nil, transform: nil,
