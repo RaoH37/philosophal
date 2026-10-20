@@ -1,0 +1,22 @@
+module Philosophal
+  module Properties
+    # Included in the instances of the classes that declare properties.
+    module InstanceMethods
+      def cprop?: (String | Symbol property_name, untyped klass) -> bool
+
+      def philosophal_inspect: (?boolish light) -> String
+
+      alias cprop_inspect philosophal_inspect
+
+      def philosophal_inspect_map: () -> Hash[Symbol, untyped]
+
+      alias cprop_inspect_map philosophal_inspect_map
+
+      def philosophal_values: () -> Array[Property]
+
+      def to_json_hash: () -> Hash[Symbol, untyped]
+
+      def to_json: (*untyped _args) -> String
+    end
+  end
+end

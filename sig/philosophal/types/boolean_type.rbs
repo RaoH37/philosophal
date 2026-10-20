@@ -1,0 +1,11 @@
+module Philosophal
+  module Types
+    class BooleanType
+      Instance: BooleanType
+
+      TRUE_FALSE_SET: Set[bool]
+
+      def ===: (untyped value) -> bool
+    end
+  end
+end

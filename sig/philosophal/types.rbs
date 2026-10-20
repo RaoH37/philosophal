@@ -1,0 +1,11 @@
+module Philosophal
+  module Types
+    def _Any: () -> AnyType
+
+    def _Boolean: () -> BooleanType
+
+    def _ArrayOf: (Module subtype) -> ArrayOfType
+
+    def _HashOf: (Module key_type, Module value_type) -> HashOfType
+  end
+end

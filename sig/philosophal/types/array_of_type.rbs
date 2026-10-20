@@ -1,0 +1,23 @@
+module Philosophal
+  module Types
+    class ArrayOfType
+      self.@memorization: Hash[Module, ArrayOfType]
+
+      def self.instance: (Module subtype) -> ArrayOfType
+
+      def self.memorization: () -> Hash[Module, ArrayOfType]
+
+      private
+
+      def self.new: (Module subtype) -> ArrayOfType
+
+      public
+
+      attr_reader subtype: Module
+
+      def initialize: (Module subtype) -> void
+
+      def ===: (untyped array) -> bool
+    end
+  end
+end

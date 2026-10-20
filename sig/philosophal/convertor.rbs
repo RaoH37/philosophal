@@ -1,0 +1,35 @@
+module Philosophal
+  class Convertor
+    METHOD_TYPE_MAP: Hash[untyped, Symbol]
+
+    def self.convert_method_for: (type_spec type) -> (Symbol | [Symbol?, untyped] | nil)
+
+    def self.convert_to_symbol: (untyped obj) -> Symbol
+
+    def self.convert_to_string: (untyped obj) -> String
+
+    def self.convert_to_integer: (untyped obj) -> Integer
+
+    def self.convert_to_float: (untyped obj) -> Float
+
+    def self.convert_to_array: (untyped obj) -> Array[untyped]
+
+    def self.convert_to_hash: (untyped obj) -> Hash[untyped, untyped]
+
+    def self.convert_to_time: (untyped obj) -> Time
+
+    def self.convert_to_date: (untyped obj) -> Date
+
+    def self.convert_to_date_time: (untyped obj) -> DateTime
+
+    def self.convert_to_any: [T] (T obj) -> T
+
+    def self.convert_to_boolean: (untyped obj) -> bool
+
+    def self.convert_to_pathname: (untyped obj) -> Pathname
+
+    def self.convert_to_array_of: (untyped obj, Module subtype) -> Array[untyped]
+
+    def self.convert_to_hash_of: (untyped obj, Types::HashOfType::subtype subtype) -> Hash[untyped, untyped]
+  end
+end

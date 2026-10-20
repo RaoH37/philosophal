@@ -8,6 +8,7 @@ gemspec
 
 gem 'minitest', '~> 5.0'
 gem 'rake'
+gem 'rbs', require: false
 
 group :rubocop do
   gem 'rubocop', '>= 1.25.1', require: false

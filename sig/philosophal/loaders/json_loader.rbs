@@ -1,0 +1,29 @@
+module Philosophal
+  module Loaders
+    class JsonLoader
+      @klass: untyped
+
+      def initialize: (Properties klass) -> void
+
+      # A Hash or a JSON object string returns one instance, an Array or a JSON array string returns a list,
+      # any other String is read as a path to a JSON file.
+      def load: (Hash[Symbol, untyped] json) -> untyped
+              | (Array[Hash[Symbol, untyped]] json) -> Array[untyped]
+              | (String json) -> untyped
+
+      private
+
+      def load_from_array: (Array[Hash[Symbol, untyped]] array) -> Array[untyped]
+
+      def load_from_hash: (Hash[Symbol, untyped] hash) -> untyped
+
+      def setter_from_key: (Symbol key) -> Symbol
+
+      def load_from_json: (String str) -> untyped
+
+      def load_from_json_collection: (String json) -> Array[untyped]
+
+      def load_from_path: (String path) -> untyped
+    end
+  end
+end

@@ -1,0 +1,38 @@
+module Philosophal
+  module Properties
+    class Schema
+      include Enumerable[Property]
+
+      @properties_index: Hash[Symbol, Property]
+      @mutex: Thread::Mutex
+      @immutables: Hash[Symbol, Property]
+      @mutables: Hash[Symbol, Property]
+      @json_names_h: Hash[Symbol, Symbol]
+
+      def initialize: (?properties_index: Hash[Symbol, Property]) -> void
+
+      def initialize_copy: (Schema source) -> void
+
+      attr_reader properties_index: Hash[Symbol, Property]
+
+      def []: (Symbol? key) -> Property?
+
+      def keys: () -> Array[Symbol]
+
+      def each: () { (Property) -> void } -> self
+              | () -> Enumerator[Property, self]
+
+      def <<: (Property value) -> self
+
+      def immutables: () -> Hash[Symbol, Property]
+
+      def mutables: () -> Hash[Symbol, Property]
+
+      def json_names_h: () -> Hash[Symbol, Symbol]
+
+      private
+
+      def clear_caches: () -> void
+    end
+  end
+end

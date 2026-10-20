@@ -1,0 +1,67 @@
+module Philosophal
+  class Property
+    @writer_method_name: Symbol
+    @boolean_method_name: Symbol
+    @description_method_name: Symbol
+
+    def initialize: (
+                      name: Symbol,
+                      type: type_spec,
+                      default: untyped,
+                      transform: transform?,
+                      immutable: bool,
+                      description: String?,
+                      json: bool | Symbol,
+                      override: bool
+                    ) -> void
+
+    attr_reader name: Symbol
+
+    attr_reader type: type_spec
+
+    attr_reader default: untyped
+
+    attr_reader transform: transform?
+
+    attr_reader immutable: bool
+
+    attr_reader description: String?
+
+    attr_reader json: bool | Symbol
+
+    attr_reader override: bool
+
+    def json_name: () -> Symbol
+
+    def default?: () -> bool
+
+    def default_value: () -> untyped
+
+    def transform?: () -> bool
+
+    def override?: () -> bool
+
+    def check_conversion: (untyped value) -> untyped
+
+    # Maps each method name to define to the generator that writes its code.
+    def method_generators: () -> Hash[Symbol, Symbol]
+
+    def writer_method_name: () -> Symbol
+
+    def generate_writer_method: (String buffer) -> String
+
+    def generate_immutable_writer_method: (String buffer) -> String
+
+    def reader_method_name: () -> Symbol
+
+    def generate_reader_method: (String buffer) -> String
+
+    def boolean_method_name: () -> Symbol
+
+    def generate_boolean_method: (String buffer) -> String
+
+    def description_method_name: () -> Symbol
+
+    def generate_description_method: (String buffer) -> String
+  end
+end

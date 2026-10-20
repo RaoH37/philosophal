@@ -1,0 +1,55 @@
+module Philosophal
+  # Extended by the classes that declare properties.
+  module Properties : Module
+    include Philosophal::Types
+
+    @philosophal_properties: Schema
+    @philosophal_descriptions: Hash[Symbol, String]
+    @json: Loaders::JsonLoader
+    @__philosophal_extension__: Module
+
+    def cprop: (
+                 Symbol name,
+                 type_spec `type`,
+                 ?default: untyped,
+                 ?transform: transform?,
+                 ?immutable: bool,
+                 ?description: String?,
+                 ?json: bool | String | Symbol,
+                 ?override: bool
+               ) -> untyped
+
+    def philosophal_properties: () -> Schema
+
+    def philosophal_descriptions: () -> Hash[Symbol, String]
+
+    alias cprop_descriptions philosophal_descriptions
+
+    def json: () -> Loaders::JsonLoader
+
+    private
+
+    def __philosophal_property_class__: () -> singleton(Property)
+
+    def __define_philosophal_methods__: (Property new_property) -> untyped
+
+    def __philosophal_extension__: () -> Module
+
+    def __generate_philosophal_methods__: (Property new_property) -> String
+
+    def __remove_philosophal_own_method__: (Symbol method_name) -> void
+
+    def __check_philosophal_options__: (
+                                         Symbol name,
+                                         transform: untyped,
+                                         immutable: untyped,
+                                         override: untyped,
+                                         description: untyped,
+                                         json: untyped
+                                       ) -> void
+
+    def __check_philosophal_transform_option__: (Symbol name, untyped transform) -> void
+
+    def __check_philosophal_boolean_option__: (Symbol option_name, untyped value) -> void
+  end
+end

@@ -1,0 +1,6 @@
+module Philosophal
+  module Loaders
+    class LoadError < StandardError
+    end
+  end
+end

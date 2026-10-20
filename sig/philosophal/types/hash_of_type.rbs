@@ -1,0 +1,25 @@
+module Philosophal
+  module Types
+    class HashOfType
+      type subtype = { key_type: Module, value_type: Module }
+
+      self.@memorization: Hash[[Module, Module], HashOfType]
+
+      def self.instance: (Module key_type, Module value_type) -> HashOfType
+
+      def self.memorization: () -> Hash[[Module, Module], HashOfType]
+
+      private
+
+      def self.new: (subtype subtype) -> HashOfType
+
+      public
+
+      attr_reader subtype: subtype
+
+      def initialize: (subtype subtype) -> void
+
+      def ===: (untyped hash) -> bool
+    end
+  end
+end

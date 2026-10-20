@@ -1,0 +1,4 @@
+module Philosophal
+  class ArgumentError < ::ArgumentError
+  end
+end

@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Add: RBS type signatures (`sig/`), shipped with the gem
 - Fix: `Properties::Schema` now defines `each`, so its Enumerable methods (`map`, `select`, `find`...) work and yield the properties
 
 ## [1.3.0] - 2026-10-19

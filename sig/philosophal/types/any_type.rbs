@@ -1,0 +1,9 @@
+module Philosophal
+  module Types
+    class AnyType
+      Instance: AnyType
+
+      def ===: (untyped _value) -> true
+    end
+  end
+end

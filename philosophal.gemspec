@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.metadata['bug_tracker_uri'] = 'https://github.com/RaoH37/philosophal/issues'
   spec.metadata['changelog_uri'] = 'https://github.com/RaoH37/philosophal/blob/main/CHANGELOG.md'
 
-  spec.files = Dir['lib/**/*.rb', 'README.md', 'LICENSE', 'CHANGELOG.md']
+  spec.files = Dir['lib/**/*.rb', 'sig/**/*.rbs', 'sig/manifest.yaml', 'README.md', 'LICENSE', 'CHANGELOG.md']
   spec.require_paths = ['lib']
 
   spec.add_dependency 'json', '~> 2.0'

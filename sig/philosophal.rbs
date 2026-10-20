@@ -1,0 +1,12 @@
+module Philosophal
+  # A type accepted by cprop: a class (String, Integer, ...) or one of the Philosophal::Types helpers.
+  type type_spec = Module | Types::AnyType | Types::BooleanType | Types::ArrayOfType | Types::HashOfType
+
+  type transform = Symbol | ^(untyped) -> untyped
+
+  def self.convert: (Property property, untyped value) -> untyped
+
+  private
+
+  def self.convert_to_type: (type_spec type, untyped value) -> untyped
+end

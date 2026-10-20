@@ -1,0 +1,4 @@
+module Philosophal
+  class TypeError < ::TypeError
+  end
+end

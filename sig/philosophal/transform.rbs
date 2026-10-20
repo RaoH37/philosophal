@@ -1,0 +1,7 @@
+module Philosophal
+  class Transform
+    def self.make: (transform method, untyped value) -> untyped
+
+    def self.self_method?: (Symbol method) -> bool
+  end
+end
