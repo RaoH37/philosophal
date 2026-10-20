@@ -11,3 +11,4 @@
 /*.lock
 /*.gem
 /bin/test
+/build
