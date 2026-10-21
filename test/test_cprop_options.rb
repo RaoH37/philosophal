@@ -19,6 +19,10 @@ class TestCpropOptions < Minitest::Test
     assert_raises(Philosophal::ArgumentError) { build_class { cprop :name, String, immutable: 'yes' } }
   end
 
+  def test_reject_non_boolean_track_changes
+    assert_raises(Philosophal::ArgumentError) { build_class { cprop :name, String, track_changes: 'yes' } }
+  end
+
   def test_reject_non_string_description
     assert_raises(Philosophal::ArgumentError) { build_class { cprop :name, String, description: :name } }
   end

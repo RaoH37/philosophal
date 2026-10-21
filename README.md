@@ -28,3 +28,28 @@ maxime.age = '40'
 puts maxime.inspect
 #<Person:0x00007da7088eed88 @first_name="maxime", @last_name="DÉSÉCOT", @age=40>
 ````
+
+### Tracking changes
+
+With `track_changes: true`, a property also gets `<name>_was`, the value before the last assignment,
+and `<name>_changed?`, true when the last assignment changed the value.
+
+```ruby
+class Article
+  extend Philosophal::Properties
+
+  cprop :title, String, track_changes: true
+end
+
+article = Article.new
+article.title_changed? # => false
+article.title = 'Draft'
+article.title_was      # => nil
+article.title_changed? # => true
+article.title = 'Final'
+article.title_was      # => "Draft"
+article.title = 'Final'
+article.title_changed? # => false
+```
+
+`<name>_was` returns the stored value, without falling back to the default.

@@ -30,8 +30,11 @@ Style/OneClassPerFile:
   Exclude:
     - 'bin/**/*'
     - 'test/test_helper.rb'
+    - 'README.md'
 
-# Convertor is a flat list of one converter per supported type.
+# Convertor is a flat list of one converter per supported type,
+# Property a flat list of one code generator per generated method.
 Metrics/ClassLength:
   Exclude:
     - 'lib/philosophal/convertor.rb'
+    - 'lib/philosophal/property.rb'

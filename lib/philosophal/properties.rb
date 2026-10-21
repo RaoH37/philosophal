@@ -8,15 +8,16 @@ module Philosophal
 
     include Philosophal::Types
 
-    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil, json: false, override: true)
-      __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:)
+    def cprop(name, type, default: nil, transform: nil, immutable: false, description: nil, json: false, override: true,
+              track_changes: false)
+      __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:, track_changes:)
 
       default.freeze unless default.is_a?(Proc)
       description&.freeze
       json = json.to_sym if json.is_a?(String)
 
       property = __philosophal_property_class__.new(
-        name:, type:, default:, transform:, immutable:, description:, json:, override:
+        name:, type:, default:, transform:, immutable:, description:, json:, override:, track_changes:
       )
 
       philosophal_properties << property
@@ -93,10 +94,11 @@ module Philosophal
       remove_method(method_name)
     end
 
-    def __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:)
+    def __check_philosophal_options__(name, transform:, immutable:, override:, description:, json:, track_changes:)
       __check_philosophal_transform_option__(name, transform)
       __check_philosophal_boolean_option__(:override, override)
       __check_philosophal_boolean_option__(:immutable, immutable)
+      __check_philosophal_boolean_option__(:track_changes, track_changes)
 
       if description && !description.is_a?(String)
         raise Philosophal::ArgumentError, 'description param must be a string.'

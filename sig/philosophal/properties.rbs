@@ -16,7 +16,8 @@ module Philosophal
                  ?immutable: bool,
                  ?description: String?,
                  ?json: bool | String | Symbol,
-                 ?override: bool
+                 ?override: bool,
+                 ?track_changes: bool
                ) -> untyped
 
     def philosophal_properties: () -> Schema
@@ -45,7 +46,8 @@ module Philosophal
                                          immutable: untyped,
                                          override: untyped,
                                          description: untyped,
-                                         json: untyped
+                                         json: untyped,
+                                         track_changes: untyped
                                        ) -> void
 
     def __check_philosophal_transform_option__: (Symbol name, untyped transform) -> void

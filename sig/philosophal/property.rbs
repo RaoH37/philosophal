@@ -3,6 +3,8 @@ module Philosophal
     @writer_method_name: Symbol
     @boolean_method_name: Symbol
     @description_method_name: Symbol
+    @was_method_name: Symbol
+    @changed_method_name: Symbol
 
     def initialize: (
                       name: Symbol,
@@ -12,7 +14,8 @@ module Philosophal
                       immutable: bool,
                       description: String?,
                       json: bool | Symbol,
-                      override: bool
+                      override: bool,
+                      ?track_changes: bool
                     ) -> void
 
     attr_reader name: Symbol
@@ -31,6 +34,8 @@ module Philosophal
 
     attr_reader override: bool
 
+    attr_reader track_changes: bool
+
     def json_name: () -> Symbol
 
     def default?: () -> bool
@@ -41,16 +46,22 @@ module Philosophal
 
     def override?: () -> bool
 
+    def track_changes?: () -> bool
+
     def check_conversion: (untyped value) -> untyped
 
     # Maps each method name to define to the generator that writes its code.
     def method_generators: () -> Hash[Symbol, Symbol]
+
+    def change_tracking_generators: () -> Hash[Symbol, Symbol]
 
     def writer_method_name: () -> Symbol
 
     def generate_writer_method: (String buffer) -> String
 
     def generate_immutable_writer_method: (String buffer) -> String
+
+    def assignment_code: () -> String
 
     def reader_method_name: () -> Symbol
 
@@ -63,5 +74,17 @@ module Philosophal
     def description_method_name: () -> Symbol
 
     def generate_description_method: (String buffer) -> String
+
+    def was_method_name: () -> Symbol
+
+    def was_variable_name: () -> String
+
+    def generate_was_method: (String buffer) -> String
+
+    def changed_method_name: () -> Symbol
+
+    def changed_variable_name: () -> String
+
+    def generate_changed_method: (String buffer) -> String
   end
 end
