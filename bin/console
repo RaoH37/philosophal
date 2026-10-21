@@ -11,12 +11,12 @@ class Person
 
   cprop :first_name, String, description: 'description of my first name property', json: 'FirstName'
   cprop :last_name, String, json: 'LastName'
-  cprop :age, Integer, json: true
+  cprop :age, Integer, json: true, track_changes: true
   cprop :size, Float, json: true
   cprop :birthday, Date
   cprop :job, String, default: 'developer', json: true
   cprop :what_time_is_it, Time, default: -> { Time.now }
-  cprop :email, String, transform: :downcase!, json: true
+  cprop :email, String, transform: :downcase!, json: true, track_changes: true
   cprop :refs, Array, transform: ->(x) { x.map(&:upcase) }
   cprop :is_male, _Boolean, json: true
   cprop :is_female, _Boolean, json: true

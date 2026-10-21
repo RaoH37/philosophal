@@ -61,8 +61,6 @@ module Philosophal
 
     def generate_immutable_writer_method: (String buffer) -> String
 
-    def assignment_code: () -> String
-
     def reader_method_name: () -> Symbol
 
     def generate_reader_method: (String buffer) -> String
@@ -82,8 +80,6 @@ module Philosophal
     def generate_was_method: (String buffer) -> String
 
     def changed_method_name: () -> Symbol
-
-    def changed_variable_name: () -> String
 
     def generate_changed_method: (String buffer) -> String
   end

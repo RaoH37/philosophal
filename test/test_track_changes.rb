@@ -30,7 +30,7 @@ class TestTrackChanges < Minitest::Test
     refute_predicate obj, :name_changed?
   end
 
-  def test_first_assignment
+  def test_assignment_before_changes_applied_is_a_change
     obj = @klass.new
     obj.name = 'a'
 
@@ -38,81 +38,69 @@ class TestTrackChanges < Minitest::Test
     assert_predicate obj, :name_changed?
   end
 
-  def test_was_is_the_value_before_the_last_assignment
-    obj = @klass.new
-    obj.name = 'a'
-    obj.name = 'b'
-
-    assert_equal 'a', obj.name_was
-    assert_predicate obj, :name_changed?
-  end
-
-  def test_assigning_the_same_value_is_not_a_change
-    obj = @klass.new
-    obj.name = 'b'
-    obj.name = 'b'
-
-    assert_equal 'b', obj.name_was
-    refute_predicate obj, :name_changed?
-  end
-
   def test_values_are_compared_after_conversion
     obj = @klass.new
     obj.age = 30
+    obj.changes_applied
     obj.age = '30'
 
-    assert_equal 30, obj.age_was
     refute_predicate obj, :age_changed?
   end
 
   def test_was_ignores_the_default
     obj = @klass.new
-    obj.age = 30
+    obj.changes_applied
 
     assert_nil obj.age_was
+    assert_equal 18, obj.age
   end
 
   def test_assigning_nil_is_a_change
     obj = @klass.new
     obj.name = 'a'
+    obj.changes_applied
     obj.name = nil
 
     assert_equal 'a', obj.name_was
     assert_predicate obj, :name_changed?
   end
 
-  def test_failed_conversion_keeps_the_tracking
+  def test_failed_conversion_keeps_the_value
     klass = build_class { cprop :flag, _Boolean, track_changes: true }
     obj = klass.new
     obj.flag = true
-    obj.flag = false
+    obj.changes_applied
     assert_raises(Philosophal::TypeError) { obj.flag = 'maybe' }
 
-    assert_equal true, obj.flag_was # rubocop:disable Minitest/AssertTruthy
-    assert_predicate obj, :flag_changed?
+    refute_predicate obj, :flag_changed?
   end
 
   def test_immutable_property
     obj = @klass.new
     obj.code = 'X1'
 
-    assert_nil obj.code_was
     assert_predicate obj, :code_changed?
+    obj.changes_applied
+
+    assert_equal 'X1', obj.code_was
+    refute_predicate obj, :code_changed?
   end
 
   def test_instances_are_tracked_separately
     first = @klass.new
     second = @klass.new
     first.name = 'a'
-    first.name = 'b'
+    first.changes_applied
+    second.name = 'b'
 
+    assert_equal 'a', first.name_was
     assert_nil second.name_was
-    refute_predicate second, :name_changed?
   end
 
   def test_inherited_by_subclasses
     obj = Class.new(@klass).new
     obj.name = 'a'
+    obj.changes_applied
     obj.name = 'b'
 
     assert_equal 'a', obj.name_was

@@ -31,8 +31,9 @@ puts maxime.inspect
 
 ### Tracking changes
 
-With `track_changes: true`, a property also gets `<name>_was`, the value before the last assignment,
-and `<name>_changed?`, true when the last assignment changed the value.
+With `track_changes: true`, a property also gets `<name>_was` and `<name>_changed?`.
+Call `changes_applied` once the object is in a known state (built, loaded, saved...):
+`<name>_was` returns the value at that moment, and `<name>_changed?` tells whether the value differs from it.
 
 ```ruby
 class Article
@@ -42,14 +43,27 @@ class Article
 end
 
 article = Article.new
-article.title_changed? # => false
 article.title = 'Draft'
-article.title_was      # => nil
-article.title_changed? # => true
+article.title_changed? # => true (no reference yet)
+article.changes_applied
+article.title_changed? # => false
+article.title = 'Review'
 article.title = 'Final'
 article.title_was      # => "Draft"
-article.title = 'Final'
+article.title_changed? # => true
+article.title = 'Draft'
 article.title_changed? # => false
 ```
 
+`changed_properties` returns the tracked properties that changed, with their new value:
+
+```ruby
+article.title = 'Final'
+article.changed_properties # => { title: "Final" }
+article.changes_applied
+article.changed_properties # => {}
+```
+
+Before the first `changes_applied`, the reference is "never assigned": every assigned property is changed.
 `<name>_was` returns the stored value, without falling back to the default.
+`json.load` does not call `changes_applied`: call it on the loaded objects if they must start unchanged.

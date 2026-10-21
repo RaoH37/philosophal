@@ -39,6 +39,28 @@ module Philosophal
         self.class.philosophal_properties.properties_index.values
       end
 
+      # Properties declared with track_changes: true whose value changed since the last changes_applied,
+      # with their new value.
+      def changed_properties
+        philosophal_values.each_with_object({}) do |property, changes|
+          next unless property.track_changes? && send(property.changed_method_name)
+
+          changes[property.name] = send(property.name)
+        end
+      end
+
+      # Records the current values as the reference of the tracked properties: none of them is changed anymore.
+      # The values are duplicated, so modifying one in place is still seen as a change.
+      def changes_applied
+        philosophal_values.each do |property|
+          next unless property.track_changes?
+
+          instance_variable_set(property.was_variable_name, instance_variable_get(:"@#{property.name}").dup)
+        end
+
+        self
+      end
+
       def to_json_hash
         philosophal_values.select(&:json).to_h do |property|
           [

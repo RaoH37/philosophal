@@ -75,8 +75,7 @@ module Philosophal
     def generate_writer_method(buffer)
       buffer << <<~RUBY
         def #{writer_method_name.name}(value)
-          new_value = self.class.philosophal_properties[:#{@name.name}].check_conversion(value)
-        #{assignment_code}
+          @#{@name.name} = self.class.philosophal_properties[:#{@name.name}].check_conversion(value)
         rescue Philosophal::TypeError => error
           error.set_backtrace(caller(1))
           raise
@@ -88,23 +87,12 @@ module Philosophal
       buffer << <<~RUBY
         def #{writer_method_name.name}(value)
           raise FrozenError, "can't modify frozen variable @#{@name.name}" if defined?(@#{@name.name})
-          new_value = self.class.philosophal_properties[:#{@name.name}].check_conversion(value).freeze
-        #{assignment_code}
+          @#{@name.name} = self.class.philosophal_properties[:#{@name.name}].check_conversion(value).freeze
         rescue Philosophal::TypeError => error
           error.set_backtrace(caller(1))
           raise
         end
       RUBY
-    end
-
-    # The previous value is recorded only once the conversion succeeded, so a failed assignment keeps it.
-    def assignment_code
-      code = +''
-      if track_changes?
-        code << "  #{was_variable_name} = @#{@name.name}\n"
-        code << "  #{changed_variable_name} = @#{@name.name} != new_value\n"
-      end
-      code << "  @#{@name.name} = new_value"
     end
 
     def reader_method_name
@@ -149,11 +137,11 @@ module Philosophal
       "@__philosophal_#{@name.name}_was__"
     end
 
-    # Returns the stored value before the last assignment, without falling back to the default.
+    # Returns the stored value at the last changes_applied (nil before), without falling back to the default.
     def generate_was_method(buffer)
       buffer << <<~RUBY
         def #{was_method_name.name}
-          #{was_variable_name} if defined?(#{was_variable_name})
+          #{was_variable_name}
         end
       RUBY
     end
@@ -164,15 +152,11 @@ module Philosophal
       @changed_method_name = :"#{@name.name}_changed?"
     end
 
-    def changed_variable_name
-      "@__philosophal_#{@name.name}_changed__"
-    end
-
-    # True when the last assignment changed the stored value.
+    # True when the stored value differs from the one recorded at the last changes_applied.
     def generate_changed_method(buffer)
       buffer << <<~RUBY
         def #{changed_method_name.name}
-          defined?(#{changed_variable_name}) ? #{changed_variable_name} : false
+          @#{@name.name} != #{was_variable_name}
         end
       RUBY
     end

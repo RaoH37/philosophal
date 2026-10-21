@@ -1,6 +1,8 @@
 ## [Unreleased]
 
-- Add: new `track_changes:` option for `cprop`, which defines `prop_was` (the value before the last assignment) and `prop_changed?` (the last assignment changed the value)
+- Add: new `track_changes:` option for `cprop`, which defines `prop_was` (the value at the last `changes_applied`) and `prop_changed?` (the value differs from it)
+- Add: `changes_applied` records the current values of the tracked properties as the reference
+- Add: `changed_properties` returns a hash of the tracked properties changed since the last `changes_applied`, with their new value
 - Add: RBS type signatures (`sig/`), shipped with the gem
 - Fix: `Properties::Schema` now defines `each`, so its Enumerable methods (`map`, `select`, `find`...) work and yield the properties
 
