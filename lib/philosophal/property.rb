@@ -50,6 +50,13 @@ module Philosophal
       Philosophal.convert(self, value)
     end
 
+    # The Convertor method (and subtype) for the type, looked up once since the type never changes.
+    def convert_method
+      return @convert_method if defined?(@convert_method)
+
+      @convert_method = Philosophal::Convertor.convert_method_for(@type)
+    end
+
     def method_generators
       generators = {
         writer_method_name => immutable ? :generate_immutable_writer_method : :generate_writer_method,
@@ -99,6 +106,12 @@ module Philosophal
       @name
     end
 
+    def variable_name
+      return @variable_name if defined? @variable_name
+
+      @variable_name = :"@#{@name.name}"
+    end
+
     def generate_reader_method(buffer)
       buffer << <<~RUBY
         def #{reader_method_name.name}
@@ -134,7 +147,9 @@ module Philosophal
     end
 
     def was_variable_name
-      "@__philosophal_#{@name.name}_was__"
+      return @was_variable_name if defined? @was_variable_name
+
+      @was_variable_name = :"@__philosophal_#{@name.name}_was__"
     end
 
     # Returns the stored value at the last changes_applied (nil before), without falling back to the default.

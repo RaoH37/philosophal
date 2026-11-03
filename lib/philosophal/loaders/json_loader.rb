@@ -46,12 +46,7 @@ module Philosophal
       end
 
       def setter_from_key(key)
-        real_key = @klass.philosophal_properties.json_names_h[key]
-        property = @klass.philosophal_properties[real_key]
-
-        return :"#{property.name}=" if property
-
-        :"#{key}="
+        @klass.philosophal_properties.json_setters[key] || :"#{key}="
       end
 
       def load_from_json(str)

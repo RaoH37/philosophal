@@ -5,6 +5,9 @@ module Philosophal
     @description_method_name: Symbol
     @was_method_name: Symbol
     @changed_method_name: Symbol
+    @variable_name: Symbol
+    @was_variable_name: Symbol
+    @convert_method: Symbol | [Symbol?, untyped] | nil
 
     def initialize: (
                       name: Symbol,
@@ -50,6 +53,8 @@ module Philosophal
 
     def check_conversion: (untyped value) -> untyped
 
+    def convert_method: () -> (Symbol | [Symbol?, untyped] | nil)
+
     # Maps each method name to define to the generator that writes its code.
     def method_generators: () -> Hash[Symbol, Symbol]
 
@@ -63,6 +68,8 @@ module Philosophal
 
     def reader_method_name: () -> Symbol
 
+    def variable_name: () -> Symbol
+
     def generate_reader_method: (String buffer) -> String
 
     def boolean_method_name: () -> Symbol
@@ -75,7 +82,7 @@ module Philosophal
 
     def was_method_name: () -> Symbol
 
-    def was_variable_name: () -> String
+    def was_variable_name: () -> Symbol
 
     def generate_was_method: (String buffer) -> String
 

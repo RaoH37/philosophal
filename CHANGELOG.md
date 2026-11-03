@@ -6,6 +6,7 @@
 - Add: RBS type signatures (`sig/`), shipped with the gem
 - Fix: **ArrayOf** and **HashOf** no longer accept `nil` or `false` entries of the wrong type without converting them
 - Fix: converting to **ArrayOf** or **HashOf** no longer modifies the given array or hash
+- Perf: fewer lookups and allocations when converting, loading JSON, `to_json_hash`, `changes_applied` and `changed_properties`
 - Fix: `Properties::Schema` now defines `each`, so its Enumerable methods (`map`, `select`, `find`...) work and yield the properties
 
 ## [1.3.0] - 2026-10-19

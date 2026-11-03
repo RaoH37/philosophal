@@ -10,7 +10,7 @@ module Philosophal
     end
 
     def self.self_method?(method)
-      method.to_s.end_with?('!')
+      method.end_with?('!')
     end
   end
 end

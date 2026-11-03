@@ -65,10 +65,33 @@ module Philosophal
         end
       end
 
+      # Maps each JSON name to the writer of its property.
+      def json_setters
+        return @json_setters if defined?(@json_setters)
+
+        @json_setters = @properties_index.each_value.to_h do |property|
+          [property.json_name, property.writer_method_name]
+        end
+      end
+
+      # Properties declared with json: (exported by to_json_hash).
+      def json_properties
+        return @json_properties if defined?(@json_properties)
+
+        @json_properties = @properties_index.each_value.select(&:json)
+      end
+
+      # Properties declared with track_changes: true.
+      def tracked
+        return @tracked if defined?(@tracked)
+
+        @tracked = @properties_index.each_value.select(&:track_changes?)
+      end
+
       private
 
       def clear_caches
-        %i[@immutables @mutables @json_names_h].each do |cache|
+        %i[@immutables @mutables @json_names_h @json_setters @json_properties @tracked].each do |cache|
           remove_instance_variable(cache) if instance_variable_defined?(cache)
         end
       end

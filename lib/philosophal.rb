@@ -22,14 +22,14 @@ module Philosophal
     # nil means "no value": it is neither converted nor transformed, so the reader falls back to the default.
     return if value.nil?
 
-    converted = property.type === value ? value : convert_to_type(property.type, value) # rubocop:disable Style/CaseEquality
+    converted = property.type === value ? value : convert_to_type(property, value) # rubocop:disable Style/CaseEquality
     return converted unless property.transform?
 
     Transform.make(property.transform, converted)
   end
 
-  def self.convert_to_type(type, value)
-    convert_method, subtype = Convertor.convert_method_for(type)
+  def self.convert_to_type(property, value)
+    convert_method, subtype = property.convert_method
     raise Philosophal::TypeError unless convert_method
 
     if subtype

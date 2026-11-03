@@ -8,6 +8,9 @@ module Philosophal
       @immutables: Hash[Symbol, Property]
       @mutables: Hash[Symbol, Property]
       @json_names_h: Hash[Symbol, Symbol]
+      @json_setters: Hash[Symbol, Symbol]
+      @json_properties: Array[Property]
+      @tracked: Array[Property]
 
       def initialize: (?properties_index: Hash[Symbol, Property]) -> void
 
@@ -29,6 +32,12 @@ module Philosophal
       def mutables: () -> Hash[Symbol, Property]
 
       def json_names_h: () -> Hash[Symbol, Symbol]
+
+      def json_setters: () -> Hash[Symbol, Symbol]
+
+      def json_properties: () -> Array[Property]
+
+      def tracked: () -> Array[Property]
 
       private
 

@@ -8,5 +8,5 @@ module Philosophal
 
   private
 
-  def self.convert_to_type: (type_spec type, untyped value) -> untyped
+  def self.convert_to_type: (Property property, untyped value) -> untyped
 end
