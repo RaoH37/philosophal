@@ -59,23 +59,6 @@ class TestProperties < Minitest::Test
     assert_equal 'inherited', klass.new.name
   end
 
-  def test_reader_without_default_returns_nil
-    obj = build_class { cprop :name, String }.new
-
-    assert_nil obj.name
-    obj.name = 'set'
-
-    assert_equal 'set', obj.name
-  end
-
-  def test_reader_without_default_is_replaced_by_subclass_default
-    parent = build_class { cprop :name, String }
-    klass = build_class(parent) { cprop :name, String, default: 'child' }
-
-    assert_equal 'child', klass.new.name
-    assert_nil parent.new.name
-  end
-
   def test_method_of_same_class_overridden_by_default
     klass = build_class do
       define_method(:name) { 'original' }

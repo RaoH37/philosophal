@@ -1,6 +1,7 @@
 module Philosophal
   class Property
     @writer_method_name: Symbol
+    @constant_name: Symbol
     @boolean_method_name: Symbol
     @description_method_name: Symbol
     @was_method_name: Symbol
@@ -59,6 +60,8 @@ module Philosophal
     def method_generators: () -> Hash[Symbol, Symbol]
 
     def change_tracking_generators: () -> Hash[Symbol, Symbol]
+
+    def constant_name: () -> Symbol
 
     def writer_method_name: () -> Symbol
 

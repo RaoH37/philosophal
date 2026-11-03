@@ -62,8 +62,18 @@ module Philosophal
     end
 
     def __define_philosophal_methods__(new_property)
+      __set_philosophal_property_constant__(new_property)
       code =	__generate_philosophal_methods__(new_property)
       __philosophal_extension__.module_eval(code)
+    end
+
+    # The constant is replaced when the property is redeclared in the same class.
+    def __set_philosophal_property_constant__(property)
+      extension = __philosophal_extension__
+      constant_name = property.constant_name
+      extension.send(:remove_const, constant_name) if extension.const_defined?(constant_name, false)
+      extension.const_set(constant_name, property)
+      extension.private_constant(constant_name)
     end
 
     def __philosophal_extension__

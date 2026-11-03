@@ -73,6 +73,14 @@ module Philosophal
       { was_method_name => :generate_was_method, changed_method_name => :generate_changed_method }
     end
 
+    # Private constant of the generated methods module holding this property, so the writers
+    # reach it without looking it up in the schema.
+    def constant_name
+      return @constant_name if defined? @constant_name
+
+      @constant_name = :"PHILOSOPHAL_PROPERTY_#{@name.name}"
+    end
+
     def writer_method_name
       return @writer_method_name if defined? @writer_method_name
 
@@ -82,7 +90,7 @@ module Philosophal
     def generate_writer_method(buffer)
       buffer << <<~RUBY
         def #{writer_method_name.name}(value)
-          @#{@name.name} = self.class.philosophal_properties[:#{@name.name}].check_conversion(value)
+          @#{@name.name} = #{constant_name}.check_conversion(value)
         rescue Philosophal::TypeError => error
           error.set_backtrace(caller(1))
           raise
@@ -94,7 +102,7 @@ module Philosophal
       buffer << <<~RUBY
         def #{writer_method_name.name}(value)
           raise FrozenError, "can't modify frozen variable @#{@name.name}" if defined?(@#{@name.name})
-          @#{@name.name} = self.class.philosophal_properties[:#{@name.name}].check_conversion(value).freeze
+          @#{@name.name} = #{constant_name}.check_conversion(value).freeze
         rescue Philosophal::TypeError => error
           error.set_backtrace(caller(1))
           raise

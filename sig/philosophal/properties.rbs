@@ -34,6 +34,8 @@ module Philosophal
 
     def __define_philosophal_methods__: (Property new_property) -> untyped
 
+    def __set_philosophal_property_constant__: (Property property) -> void
+
     def __philosophal_extension__: () -> Module
 
     def __generate_philosophal_methods__: (Property new_property) -> String
