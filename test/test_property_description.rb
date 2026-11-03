@@ -39,4 +39,12 @@ class TestPropertyDescription < Minitest::Test
 
     assert_equal 'value: #{1 + 1}', klass.new.name_description # rubocop:disable Lint/InterpolationCheck
   end
+
+  def test_subclass_description
+    parent = build_class { cprop :name, String, description: 'parent' }
+    klass = build_class(parent) { cprop :name, String, description: 'child' }
+
+    assert_equal 'child', klass.new.name_description
+    assert_equal 'parent', parent.new.name_description
+  end
 end

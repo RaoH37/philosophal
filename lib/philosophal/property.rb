@@ -191,12 +191,12 @@ module Philosophal
       RUBY
     end
 
-    # The description is read from the schema rather than written into the generated code,
+    # The description is read from the property constant rather than written into the generated code,
     # so it is never evaluated as Ruby.
     def generate_description_method(buffer)
       buffer << <<~RUBY
         def #{description_method_name.name}
-          self.class.philosophal_properties[:#{@name.name}].description
+          #{constant_name}.description
         end
       RUBY
     end
