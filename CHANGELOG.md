@@ -4,6 +4,8 @@
 - Add: `changes_applied` records the current values of the tracked properties as the reference
 - Add: `changed_properties` returns a hash of the tracked properties changed since the last `changes_applied`, with their new value
 - Add: RBS type signatures (`sig/`), shipped with the gem
+- Fix: **ArrayOf** and **HashOf** no longer accept `nil` or `false` entries of the wrong type without converting them
+- Fix: converting to **ArrayOf** or **HashOf** no longer modifies the given array or hash
 - Fix: `Properties::Schema` now defines `each`, so its Enumerable methods (`map`, `select`, `find`...) work and yield the properties
 
 ## [1.3.0] - 2026-10-19

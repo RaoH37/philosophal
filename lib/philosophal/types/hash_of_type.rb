@@ -22,9 +22,11 @@ module Philosophal
       end
 
       def ===(hash)
-        hash.is_a?(Hash) &&
-          !hash.keys.find { |key| !key.is_a?(@subtype[:key_type]) } &&
-          !hash.values.find { |value| !value.is_a?(@subtype[:value_type]) }
+        return false unless hash.is_a?(Hash)
+
+        key_type = @subtype[:key_type]
+        value_type = @subtype[:value_type]
+        hash.all? { |key, value| key.is_a?(key_type) && value.is_a?(value_type) }
       end
     end
   end

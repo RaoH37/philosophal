@@ -41,6 +41,22 @@ class TestTypeArrayOf < Minitest::Test
     refute_operator type, :===, 'a'
   end
 
+  def test_type_matching_rejects_nil_and_false
+    type = Philosophal::Types::ArrayOfType.instance(String)
+
+    refute_operator type, :===, ['a', nil]
+    refute_operator type, :===, ['a', false]
+  end
+
+  def test_convert_does_not_modify_given_array
+    obj = build_class { cprop :ids, _ArrayOf(Integer) }.new
+    source = %w[1 2]
+    obj.ids = source
+
+    assert_equal [1, 2], obj.ids
+    assert_equal %w[1 2], source
+  end
+
   def test_different_instances_for_different_subtypes
     refute_same Philosophal::Types::ArrayOfType.instance(String),
                 Philosophal::Types::ArrayOfType.instance(Integer)

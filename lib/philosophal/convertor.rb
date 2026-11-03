@@ -120,11 +120,8 @@ module Philosophal
         subtype_convert_method = convert_method_for(subtype)
         raise Philosophal::TypeError unless subtype_convert_method
 
-        convert_to_array(obj).tap do |new_obj|
-          new_obj.map! do |item|
-            send(subtype_convert_method, item)
-          end
-        end
+        # map, not map!: Array#to_a returns the given array itself, which must not be modified.
+        convert_to_array(obj).map { |item| send(subtype_convert_method, item) }
       end
 
       def convert_to_hash_of(obj, subtype)
@@ -134,9 +131,9 @@ module Philosophal
         value_convert_method = convert_method_for(subtype[:value_type])
         raise Philosophal::TypeError unless value_convert_method
 
-        convert_to_hash(obj).tap do |new_obj|
-          new_obj.transform_keys! { |key| send(key_convert_method, key) }
-          new_obj.transform_values! { |value| send(value_convert_method, value) }
+        # A new hash is built: Hash#to_h returns the given hash itself, which must not be modified.
+        convert_to_hash(obj).to_h do |key, value|
+          [send(key_convert_method, key), send(value_convert_method, value)]
         end
       end
     end

@@ -22,7 +22,7 @@ module Philosophal
       end
 
       def ===(array)
-        array.is_a?(Array) && !array.find { |entry| !entry.is_a?(@subtype) }
+        array.is_a?(Array) && array.all?(@subtype)
       end
     end
   end

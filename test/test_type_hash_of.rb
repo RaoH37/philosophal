@@ -32,6 +32,27 @@ class TestTypeHashOf < Minitest::Test
     refute_operator type, :===, { a: 1 }
   end
 
+  def test_type_matching_rejects_nil_and_false
+    type = Philosophal::Types::HashOfType.instance(Symbol, String)
+
+    refute_operator type, :===, { a: nil }
+    refute_operator type, :===, { a: false }
+  end
+
+  def test_convert_does_not_modify_given_hash
+    klass = Class.new do
+      extend Philosophal::Properties
+
+      cprop :scores, _HashOf(Symbol, Integer)
+    end
+    obj = klass.new
+    source = { 'a' => '1' }
+    obj.scores = source
+
+    assert_equal({ a: 1 }, obj.scores)
+    assert_equal({ 'a' => '1' }, source)
+  end
+
   def test_different_instances_for_different_subtypes
     refute_same Philosophal::Types::HashOfType.instance(Symbol, String),
                 Philosophal::Types::HashOfType.instance(String, Symbol)
