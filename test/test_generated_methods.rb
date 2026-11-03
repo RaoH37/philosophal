@@ -26,6 +26,14 @@ class TestGeneratedMethods < Minitest::Test
     assert_equal '42', parent.new.tap { |p| p.count = 42 }.count
   end
 
+  def test_reader_uses_subclass_default
+    parent = build_class { cprop :name, String, default: 'parent' }
+    klass = build_class(parent) { cprop :name, String, default: 'child' }
+
+    assert_equal 'child', klass.new.name
+    assert_equal 'parent', parent.new.name
+  end
+
   def test_property_constant_is_private
     klass = build_class { cprop :name, String }
 
