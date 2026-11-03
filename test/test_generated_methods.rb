@@ -16,6 +16,20 @@ class TestGeneratedMethods < Minitest::Test
     assert_equal 42, obj.count
   end
 
+  def test_redeclared_property_raises_no_warning
+    verbose = $VERBOSE
+    $VERBOSE = true
+
+    assert_silent do
+      build_class do
+        cprop :count, String, default: 'a'
+        cprop :count, Integer, default: 1
+      end
+    end
+  ensure
+    $VERBOSE = verbose
+  end
+
   def test_writer_uses_subclass_property
     parent = build_class { cprop :count, String }
     klass = build_class(parent) { cprop :count, Integer }
