@@ -102,9 +102,9 @@ module Philosophal
           return false if obj.zero?
 
         elsif obj.is_a?(String)
-          obj_downcase = obj.downcase
-          return true if obj_downcase == 'true'
-          return false if obj_downcase == 'false'
+          # casecmp compares ASCII only, which is enough for 'true' and 'false', and allocates no string.
+          return true if obj.casecmp('true') == 0 # rubocop:disable Style/NumericPredicate
+          return false if obj.casecmp('false') == 0 # rubocop:disable Style/NumericPredicate
 
         end
         raise Philosophal::TypeError

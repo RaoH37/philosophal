@@ -8,7 +8,7 @@ module Philosophal
       TRUE_FALSE_SET = Set[true, false]
 
       def ===(value)
-        TRUE_FALSE_SET.include?(value)
+        true.equal?(value) || false.equal?(value)
       end
 
       freeze
