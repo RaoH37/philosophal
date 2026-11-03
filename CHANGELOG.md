@@ -1,4 +1,4 @@
-## [Unreleased]
+## [2.0.0] - 2026-11-03
 
 - Add: new `track_changes:` option for `cprop`, which defines `prop_was` (the value at the last `changes_applied`) and `prop_changed?` (the value differs from it)
 - Add: `changes_applied` records the current values of the tracked properties as the reference
