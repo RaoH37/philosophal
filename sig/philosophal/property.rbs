@@ -70,6 +70,8 @@ module Philosophal
 
     def variable_name: () -> Symbol
 
+    def generate_plain_reader_method: (String buffer) -> String
+
     def generate_reader_method: (String buffer) -> String
 
     def boolean_method_name: () -> Symbol

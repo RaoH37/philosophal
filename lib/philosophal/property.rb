@@ -60,7 +60,7 @@ module Philosophal
     def method_generators
       generators = {
         writer_method_name => immutable ? :generate_immutable_writer_method : :generate_writer_method,
-        reader_method_name => :generate_reader_method
+        reader_method_name => default? ? :generate_reader_method : :generate_plain_reader_method
       }
       generators[boolean_method_name] = :generate_boolean_method if type == Philosophal::Types::BooleanType::Instance
       generators[description_method_name] = :generate_description_method if description
@@ -110,6 +110,13 @@ module Philosophal
       return @variable_name if defined? @variable_name
 
       @variable_name = :"@#{@name.name}"
+    end
+
+    # Without a default the reader only returns the variable: attr_reader is the fastest form.
+    # The default is not looked up, so a subclass redeclaring the property with a default and
+    # override: false keeps this reader and does not get its default (not supported).
+    def generate_plain_reader_method(buffer)
+      buffer << "attr_reader :#{reader_method_name.name}\n"
     end
 
     def generate_reader_method(buffer)
